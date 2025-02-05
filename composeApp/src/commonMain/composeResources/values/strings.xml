@@ -1,0 +1,6 @@
+<resources>
+    <string name="lightbulb">Lightbulb</string>
+    <string name="switch">Switch</string>
+    <string name="humidity">Humidity</string>
+    <string name="thermostat">Thermostat</string>
+</resources>
