@@ -1,20 +1,37 @@
 [versions]
 agp = "8.7.3"
-android-compileSdk = "34"
+android-compileSdk = "35"
 android-minSdk = "24"
-android-targetSdk = "34"
-androidx-activityCompose = "1.9.3"
+android-targetSdk = "35"
+androidx-activityCompose = "1.10.1"
 androidx-appcompat = "1.7.0"
-androidx-core-ktx = "1.15.0"
+androidx-core-ktx = "1.16.0"
 androidx-espresso-core = "3.6.1"
-androidx-lifecycle = "2.8.4"
+androidx-lifecycle = "2.9.0-beta01"
+androidx-navigation = "2.9.0-beta01"
 androidx-test-junit = "1.2.1"
-compose-multiplatform = "1.7.0"
 junit = "4.13.2"
-kotlin = "2.1.10"
 kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.8.1"
+
+kotlin = "2.1.20"
+
+compose-multiplatform = "1.8.0"
+compose-hot-reload = "1.0.0-alpha09"
+javafx = "22.0.1"
+
+koin = "4.1.0-Beta8"
+uiTestJunit4Android = "1.7.8"
+uiTestManifest = "1.7.8"
+
+ktor = "3.1.1"
+coil = "3.2.0-rc02"
+
+material-icons = "1.7.3"
 
 [libraries]
+androidx-ui-test-manifest = { module = "androidx.compose.ui:ui-test-manifest", version.ref = "uiTestManifest" }
+androidx-ui-test-junit4-android = { module = "androidx.compose.ui:ui-test-junit4-android", version.ref = "uiTestJunit4Android" }
 kotlin-test = { module = "org.jetbrains.kotlin:kotlin-test", version.ref = "kotlin" }
 kotlin-test-junit = { module = "org.jetbrains.kotlin:kotlin-test-junit", version.ref = "kotlin" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -25,7 +42,24 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+koin-compose-viewmodel-navigation = { module = "io.insert-koin:koin-compose-viewmodel-navigation", version.ref = "koin" }
+material-icons-core = { module = "org.jetbrains.compose.material:material-icons-core", version.ref = "material-icons"}
+
+coil-compose = { module = "io.coil-kt.coil3:coil-compose", version.ref = "coil" }
+coil-network-ktor3 = { module = "io.coil-kt.coil3:coil-network-ktor3", version.ref = "coil" }
+ktor-client-darwin = { module = "io.ktor:ktor-client-darwin", version.ref = "ktor" }
+ktor-client-okhttp = { module = "io.ktor:ktor-client-okhttp", version.ref = "ktor" }
+
+javafx-base = { group = "org.openjfx", name = "javafx-base", version.ref = "javafx" }
+javafx-graphics = { group = "org.openjfx", name = "javafx-graphics", version.ref = "javafx" }
+javafx-swing = { group = "org.openjfx", name = "javafx-swing", version.ref = "javafx" }
+javafx-media = { group = "org.openjfx", name = "javafx-media", version.ref = "javafx" }
+
+[bundles]
+javafx = ["javafx-base", "javafx-graphics", "javafx-swing", "javafx-media"]
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -33,3 +67,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
+composeHotReload = { id = "org.jetbrains.compose.hot-reload", version.ref = "compose-hot-reload" }
