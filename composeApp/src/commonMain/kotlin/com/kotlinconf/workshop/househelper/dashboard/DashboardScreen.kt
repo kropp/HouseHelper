@@ -108,10 +108,10 @@ private fun DeviceCard(
             .widthIn(max = 140.dp)
             .height(140.dp)
             .background(
-                if (device is Toggleable && !device.isOn) {
-                    MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
-                } else {
-                    MaterialTheme.colorScheme.surface
+                when {
+                    device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primaryContainer
+                    device is Toggleable -> MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+                    else -> MaterialTheme.colorScheme.surfaceVariant
                 }
             )
             .clickable(onClick = onClick)
@@ -125,15 +125,22 @@ private fun DeviceCard(
                 painter = painterResource(device.iconResource),
                 contentDescription = device.name,
                 modifier = Modifier.size(40.dp),
-                colorFilter = if (device is Toggleable && device.isOn) {
-                    ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                } else null,
+                colorFilter = when {
+                    device is Toggleable && device.isOn -> ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    device is Toggleable -> ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
+                    else -> ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
+                },
                 alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = device.name,
-                style = MaterialTheme.typography.bodySmall
+                style = MaterialTheme.typography.bodySmall,
+                color = when {
+                    device is Toggleable && device.isOn -> MaterialTheme.colorScheme.onPrimaryContainer
+                    device is Toggleable -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                    else -> MaterialTheme.colorScheme.onSurfaceVariant
+                }
             )
         }
     }
