@@ -58,13 +58,16 @@ import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.Toggleable
+import com.kotlinconf.workshop.househelper.LightDevice
+import com.kotlinconf.workshop.househelper.CameraDevice
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
 
 @Composable
 fun DashboardScreen(
-    onNavigateToDevice: (DeviceId) -> Unit,
+    onNavigateToLightDetails: (DeviceId) -> Unit,
+    onNavigateToCameraDetails: (DeviceId) -> Unit,
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val rooms by viewModel.rooms.collectAsState()
@@ -80,7 +83,11 @@ fun DashboardScreen(
                 devices = devices,
                 onClick = { viewModel.onDeviceClicked(it) },
                 onLongClick = { device -> 
-                    onNavigateToDevice(device.deviceId)
+                    when (device) {
+                        is LightDevice -> onNavigateToLightDetails(device.deviceId)
+                        is CameraDevice -> onNavigateToCameraDetails(device.deviceId)
+                        else -> { /* Other device types are not navigable */ }
+                    }
                 },
             )
         }

@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navigation
+import androidx.navigation.compose.navigation
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
@@ -13,10 +13,13 @@ import com.kotlinconf.workshop.househelper.navigation.Onboarding
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.StartScreens
 import com.kotlinconf.workshop.househelper.navigation.Welcome
-import com.kotlinconf.workshop.househelper.navigation.DeviceManagement
-import com.kotlinconf.workshop.househelper.device.DeviceManagementScreen
-import com.kotlinconf.workshop.househelper.device.DeviceManagementViewModel
+import com.kotlinconf.workshop.househelper.navigation.LightDetails
+import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
+import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
+import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_done
@@ -51,16 +54,28 @@ fun App() {
                 }
                 composable<Dashboard> {
                     DashboardScreen(
-                        onNavigateToDevice = { deviceId ->
-                            navController.navigate(DeviceManagement(deviceId))
+                        onNavigateToLightDetails = { deviceId ->
+                            navController.navigate(LightDetails(deviceId))
+                        },
+                        onNavigateToCameraDetails = { deviceId ->
+                            navController.navigate(CameraDetails(deviceId))
                         }
                     )
                 }
-                composable<DeviceManagement>(
+                composable<LightDetails>(
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) { entry ->
-                    val deviceId = entry.toRoute<DeviceManagement>().deviceId
-                    DeviceManagementScreen(
+                ) {
+                    val deviceId = it.toRoute<LightDetails>().deviceId
+                    LightDetailsScreen(
+                        deviceId = deviceId,
+                        onNavigateUp = { navController.navigateUp() }
+                    )
+                }
+                composable<CameraDetails>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                ) {
+                    val deviceId = it.toRoute<CameraDetails>().deviceId
+                    CameraDetailsScreen(
                         deviceId = deviceId,
                         onNavigateUp = { navController.navigateUp() }
                     )
@@ -77,7 +92,8 @@ private fun koinConfiguration() = koinConfiguration {
 
     val viewModelModule = module {
         viewModelOf(::DashboardViewModel)
-        viewModelOf(::DeviceManagementViewModel)
+        viewModelOf(::LightDetailsViewModel)
+        viewModelOf(::CameraDetailsViewModel)
     }
 
     modules(appModule, viewModelModule)
