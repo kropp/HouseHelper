@@ -40,6 +40,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -171,14 +172,28 @@ private fun DeviceCard(
             .clip(cardShape)
             .widthIn(max = 140.dp)
             .height(140.dp)
-            .background(backgroundColor)
-            .combinedClickable(
+            .background(MaterialTheme.colorScheme.surface)
+            .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
                 onClick = onClick,
-                onLongClick = onLongClick,
             )
     ) {
+        if (device is LightDevice && device.isOn) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(140.dp * (device.brightness.toFloat() / 100f))
+                    .background(backgroundColor)
+                    .align(Alignment.BottomCenter)
+            )
+        } else {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(backgroundColor)
+            )
+        }
         val contentColor by animateColorAsState(
             targetValue = when {
                 device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primary
@@ -187,23 +202,55 @@ private fun DeviceCard(
             }
         )
         Column(
-            modifier = Modifier.fillMaxSize().padding(8.dp),
+            modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.SpaceBetween
         ) {
-            Image(
-                painter = painterResource(device.iconResource),
-                contentDescription = device.name,
-                modifier = Modifier.size(40.dp),
-                colorFilter = ColorFilter.tint(contentColor),
-                alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = device.name,
-                style = MaterialTheme.typography.bodySmall,
-                color = contentColor
-            )
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
+            ) {
+                Image(
+                    painter = painterResource(device.iconResource),
+                    contentDescription = device.name,
+                    modifier = Modifier.size(40.dp),
+                    colorFilter = ColorFilter.tint(contentColor),
+                    alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = device.name,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = contentColor
+                )
+            }
+            when (device) {
+                is LightDevice, is CameraDevice -> {
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                indication = null,
+                                onClick = onLongClick
+                            )
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "View more",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+                else -> { /* Other device types are not navigable */ }
+            }
         }
     }
 }
