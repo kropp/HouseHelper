@@ -1,11 +1,14 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -65,7 +68,6 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val rooms by viewModel.rooms.collectAsState()
-
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
@@ -149,18 +151,20 @@ private fun DeviceCard(
     modifier: Modifier = Modifier,
 ) {
     val cardShape = RoundedCornerShape(12.dp)
+    val backgroundColor by animateColorAsState(
+        targetValue = when {
+            device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primaryContainer
+            device is Toggleable -> MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
+            else -> MaterialTheme.colorScheme.surfaceVariant
+        }
+    )
+
     Box(
         modifier = modifier
             .clip(cardShape)
             .widthIn(max = 140.dp)
             .height(140.dp)
-            .background(
-                when {
-                    device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primaryContainer
-                    device is Toggleable -> MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
-                    else -> MaterialTheme.colorScheme.surfaceVariant
-                }
-            )
+            .background(backgroundColor)
             .combinedClickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
@@ -168,6 +172,13 @@ private fun DeviceCard(
                 onLongClick = onLongClick,
             )
     ) {
+        val contentColor by animateColorAsState(
+            targetValue = when {
+                device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primary
+                device is Toggleable -> MaterialTheme.colorScheme.onSurface
+                else -> MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        )
         Column(
             modifier = Modifier.fillMaxSize().padding(8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -177,22 +188,14 @@ private fun DeviceCard(
                 painter = painterResource(device.iconResource),
                 contentDescription = device.name,
                 modifier = Modifier.size(40.dp),
-                colorFilter = when {
-                    device is Toggleable && device.isOn -> ColorFilter.tint(MaterialTheme.colorScheme.primary)
-                    device is Toggleable -> ColorFilter.tint(MaterialTheme.colorScheme.onSurface)
-                    else -> ColorFilter.tint(MaterialTheme.colorScheme.onSurfaceVariant)
-                },
+                colorFilter = ColorFilter.tint(contentColor),
                 alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
             )
             Spacer(modifier = Modifier.height(4.dp))
             Text(
                 text = device.name,
                 style = MaterialTheme.typography.bodySmall,
-                color = when {
-                    device is Toggleable && device.isOn -> MaterialTheme.colorScheme.onPrimaryContainer
-                    device is Toggleable -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                    else -> MaterialTheme.colorScheme.onSurfaceVariant
-                }
+                color = contentColor
             )
         }
     }
