@@ -6,9 +6,8 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
-import com.kotlinconf.workshop.househelper.navigation.Dashboard
-import com.kotlinconf.workshop.househelper.navigation.Onboarding
+import androidx.navigation.navigation
+import com.kotlinconf.workshop.househelper.navigation.*
 import househelper.composeapp.generated.resources.*
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
@@ -18,16 +17,17 @@ import org.jetbrains.compose.ui.tooling.preview.Preview
 @Preview
 fun App() {
     val navController = rememberNavController()
-    NavHost(navController, startDestination = Onboarding(1)) {
-        composable<Onboarding> {
-            val route = it.toRoute<Onboarding>()
-            Onboarding(route.step, {
-                if (route.step == 3) {
-                    navController.navigate(Dashboard)
-                } else {
-                    navController.navigate(Onboarding(route.step + 1))
-                }
-            })
+    NavHost(navController, startDestination = StartScreens) {
+        navigation<StartScreens>(startDestination = Welcome) {
+            composable<Welcome> {
+                Onboarding(Res.string.onboarding_welcome, { navController.navigate(Onboarding) })
+            }
+            composable<Onboarding> {
+                Onboarding(Res.string.onboarding_about, { navController.navigate(OnboardingDone) })
+            }
+            composable<OnboardingDone> {
+                Onboarding(Res.string.onboarding_done, { navController.navigate(Dashboard) })
+            }
         }
         composable<Dashboard> {
             Column {

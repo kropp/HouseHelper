@@ -4,6 +4,8 @@
     <string name="humidity">Humidity</string>
     <string name="thermostat">Thermostat</string>
 
-    <string name="onboarding_step">Onboarding step %1$d</string>
+    <string name="onboarding_welcome">Welcome</string>
+    <string name="onboarding_about">Here is our app</string>
+    <string name="onboarding_done">Continue to the app</string>
     <string name="onboarding_next_button">Next</string>
 </resources>

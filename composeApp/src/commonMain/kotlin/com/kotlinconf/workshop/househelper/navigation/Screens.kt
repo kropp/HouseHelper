@@ -2,9 +2,20 @@ package com.kotlinconf.workshop.househelper.navigation
 
 import kotlinx.serialization.Serializable
 
+// Start screens
 @Serializable
-data class Onboarding(val step: Int)
+data object StartScreens
 
+@Serializable
+data object Welcome
+
+@Serializable
+data object Onboarding
+
+@Serializable
+data object OnboardingDone
+
+// Main screens
 @Serializable
 data object Dashboard
 
