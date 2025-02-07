@@ -2,10 +2,8 @@ package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kotlinconf.workshop.househelper.Device
+import com.kotlinconf.workshop.househelper.*
 import com.kotlinconf.workshop.househelper.data.HouseService
-import com.kotlinconf.workshop.househelper.Room
-import com.kotlinconf.workshop.househelper.RoomId
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
@@ -29,7 +27,15 @@ class DashboardViewModel(
         )
 
     fun onDeviceClicked(device: Device) {
-        houseService.toggleDevice(device)
+        val updatedDevice = when {
+            device is Toggleable -> when (device) {
+                is LightDevice -> device.copy(isOn = !device.isOn)
+                is SwitchDevice -> device.copy(isOn = !device.isOn)
+                is CameraDevice -> device.copy(isOn = !device.isOn)
+            }
+            else -> device
+        }
+        houseService.updateDevice(updatedDevice)
     }
 
     fun onDeviceLongPressed(device: Device) {

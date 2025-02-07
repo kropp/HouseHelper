@@ -10,5 +10,5 @@ interface HouseService {
     fun getRooms(): Flow<List<Room>>
     fun getDevicesForRoom(roomId: RoomId): Flow<List<Device>>
     fun getDevice(deviceId: DeviceId): Flow<Device?>
-    fun toggleDevice(device: Device)
+    fun updateDevice(newDevice: Device)
 }

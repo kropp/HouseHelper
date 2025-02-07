@@ -175,17 +175,11 @@ class DemoHouseService : HouseService {
         deviceList.find { device -> device.deviceId == deviceId }
     }
 
-    override fun toggleDevice(device: Device) {
+    override fun updateDevice(device: Device) {
         devices.update { currentDevices ->
             currentDevices.map { currentDevice ->
-                if (currentDevice === device) {
-                    when (currentDevice) {
-                        is LightDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
-                        is SwitchDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
-                        is CameraDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
-                        is HumidityDevice -> currentDevice
-                        is ThermostatDevice -> currentDevice
-                    }
+                if (currentDevice.deviceId == device.deviceId) {
+                    device
                 } else {
                     currentDevice
                 }

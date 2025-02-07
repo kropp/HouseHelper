@@ -24,7 +24,7 @@ data class Room(
     val name: String,
 )
 
-interface Toggleable {
+sealed interface Toggleable {
     val isOn: Boolean
 }
 
