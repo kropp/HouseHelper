@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtLeast
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.Room
+import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.Toggleable
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel

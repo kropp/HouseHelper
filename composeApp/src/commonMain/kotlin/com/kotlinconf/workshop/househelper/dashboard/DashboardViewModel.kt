@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.HouseService
 import com.kotlinconf.workshop.househelper.Room
+import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.Toggleable
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ class DashboardViewModel(
             initialValue = emptyList()
         )
 
-    fun getDevicesForRoom(roomId: String): StateFlow<List<Device>> = houseService.getDevicesForRoom(roomId)
+    fun getDevicesForRoom(roomId: RoomId): StateFlow<List<Device>> = houseService.getDevicesForRoom(roomId)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),

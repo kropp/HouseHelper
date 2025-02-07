@@ -8,58 +8,58 @@ import kotlinx.coroutines.flow.update
 class HouseService {
     private val rooms = MutableStateFlow(
         listOf(
-            Room(id = "living_room", name = "Living Room"),
-            Room(id = "kitchen", name = "Kitchen"),
-            Room(id = "bathroom", name = "Bathroom"),
-            Room(id = "bedroom", name = "Bedroom")
+            Room(id = RoomId("living_room"), name = "Living Room"),
+            Room(id = RoomId("kitchen"), name = "Kitchen"),
+            Room(id = RoomId("bathroom"), name = "Bathroom"),
+            Room(id = RoomId("bedroom"), name = "Bedroom")
         )
     )
 
     private val devices = MutableStateFlow(
         listOf(
             // Living Room devices
-            LightDevice(name = "Main Light", roomId = "living_room", isOn = true),
-            LightDevice(name = "Floor Lamp", roomId = "living_room"),
-            LightDevice(name = "Reading Light", roomId = "living_room", isOn = true),
-            SwitchDevice(name = "TV Switch", roomId = "living_room", isOn = true),
-            SwitchDevice(name = "Gaming Console", roomId = "living_room"),
-            ThermostatDevice(name = "Temperature", roomId = "living_room"),
-            HumidityDevice(name = "Humidity", roomId = "living_room"),
-            CameraDevice(name = "Security Camera", roomId = "living_room", isOn = true),
+            LightDevice(deviceId = DeviceId("living_room_main_light"), name = "Main Light", roomId = RoomId("living_room"), isOn = true),
+            LightDevice(deviceId = DeviceId("living_room_floor_lamp"), name = "Floor Lamp", roomId = RoomId("living_room")),
+            LightDevice(deviceId = DeviceId("living_room_reading_light"), name = "Reading Light", roomId = RoomId("living_room"), isOn = true),
+            SwitchDevice(deviceId = DeviceId("living_room_tv_switch"), name = "TV Switch", roomId = RoomId("living_room"), isOn = true),
+            SwitchDevice(deviceId = DeviceId("living_room_gaming_console"), name = "Gaming Console", roomId = RoomId("living_room")),
+            ThermostatDevice(deviceId = DeviceId("living_room_temperature"), name = "Temperature", roomId = RoomId("living_room")),
+            HumidityDevice(deviceId = DeviceId("living_room_humidity"), name = "Humidity", roomId = RoomId("living_room")),
+            CameraDevice(deviceId = DeviceId("living_room_security_camera"), name = "Security Camera", roomId = RoomId("living_room"), isOn = true),
 
             // Kitchen devices
-            LightDevice(name = "Ceiling Light", roomId = "kitchen"),
-            LightDevice(name = "Counter Light", roomId = "kitchen", isOn = true),
-            LightDevice(name = "Under Cabinet Light", roomId = "kitchen", isOn = true),
-            HumidityDevice(name = "Humidity", roomId = "kitchen"),
-            SwitchDevice(name = "Oven Switch", roomId = "kitchen"),
-            SwitchDevice(name = "Dishwasher", roomId = "kitchen", isOn = true),
-            ThermostatDevice(name = "Temperature", roomId = "kitchen"),
-            CameraDevice(name = "Security Camera", roomId = "kitchen"),
+            LightDevice(deviceId = DeviceId("kitchen_ceiling_light"), name = "Ceiling Light", roomId = RoomId("kitchen")),
+            LightDevice(deviceId = DeviceId("kitchen_counter_light"), name = "Counter Light", roomId = RoomId("kitchen"), isOn = true),
+            LightDevice(deviceId = DeviceId("kitchen_under_cabinet_light"), name = "Under Cabinet Light", roomId = RoomId("kitchen"), isOn = true),
+            HumidityDevice(deviceId = DeviceId("kitchen_humidity"), name = "Humidity", roomId = RoomId("kitchen")),
+            SwitchDevice(deviceId = DeviceId("kitchen_oven_switch"), name = "Oven Switch", roomId = RoomId("kitchen")),
+            SwitchDevice(deviceId = DeviceId("kitchen_dishwasher"), name = "Dishwasher", roomId = RoomId("kitchen"), isOn = true),
+            ThermostatDevice(deviceId = DeviceId("kitchen_temperature"), name = "Temperature", roomId = RoomId("kitchen")),
+            CameraDevice(deviceId = DeviceId("kitchen_security_camera"), name = "Security Camera", roomId = RoomId("kitchen")),
 
             // Bathroom devices
-            LightDevice(name = "Main Light", roomId = "bathroom", isOn = true),
-            LightDevice(name = "Mirror Light", roomId = "bathroom", isOn = true),
-            LightDevice(name = "Shower Light", roomId = "bathroom"),
-            HumidityDevice(name = "Humidity", roomId = "bathroom"),
-            ThermostatDevice(name = "Temperature", roomId = "bathroom"),
-            CameraDevice(name = "Security Camera", roomId = "bathroom"),
+            LightDevice(deviceId = DeviceId("bathroom_main_light"), name = "Main Light", roomId = RoomId("bathroom"), isOn = true),
+            LightDevice(deviceId = DeviceId("bathroom_mirror_light"), name = "Mirror Light", roomId = RoomId("bathroom"), isOn = true),
+            LightDevice(deviceId = DeviceId("bathroom_shower_light"), name = "Shower Light", roomId = RoomId("bathroom")),
+            HumidityDevice(deviceId = DeviceId("bathroom_humidity"), name = "Humidity", roomId = RoomId("bathroom")),
+            ThermostatDevice(deviceId = DeviceId("bathroom_temperature"), name = "Temperature", roomId = RoomId("bathroom")),
+            CameraDevice(deviceId = DeviceId("bathroom_security_camera"), name = "Security Camera", roomId = RoomId("bathroom")),
 
             // Bedroom devices
-            LightDevice(name = "Main Light", roomId = "bedroom"),
-            LightDevice(name = "Bedside Lamp Left", roomId = "bedroom", isOn = true),
-            LightDevice(name = "Bedside Lamp Right", roomId = "bedroom"),
-            SwitchDevice(name = "TV Switch", roomId = "bedroom"),
-            SwitchDevice(name = "Air Purifier", roomId = "bedroom", isOn = true),
-            ThermostatDevice(name = "Temperature", roomId = "bedroom"),
-            HumidityDevice(name = "Humidity", roomId = "bedroom"),
-            CameraDevice(name = "Security Camera", roomId = "bedroom")
+            LightDevice(deviceId = DeviceId("bedroom_main_light"), name = "Main Light", roomId = RoomId("bedroom")),
+            LightDevice(deviceId = DeviceId("bedroom_bedside_lamp_left"), name = "Bedside Lamp Left", roomId = RoomId("bedroom"), isOn = true),
+            LightDevice(deviceId = DeviceId("bedroom_bedside_lamp_right"), name = "Bedside Lamp Right", roomId = RoomId("bedroom")),
+            SwitchDevice(deviceId = DeviceId("bedroom_tv_switch"), name = "TV Switch", roomId = RoomId("bedroom")),
+            SwitchDevice(deviceId = DeviceId("bedroom_air_purifier"), name = "Air Purifier", roomId = RoomId("bedroom"), isOn = true),
+            ThermostatDevice(deviceId = DeviceId("bedroom_temperature"), name = "Temperature", roomId = RoomId("bedroom")),
+            HumidityDevice(deviceId = DeviceId("bedroom_humidity"), name = "Humidity", roomId = RoomId("bedroom")),
+            CameraDevice(deviceId = DeviceId("bedroom_security_camera"), name = "Security Camera", roomId = RoomId("bedroom"))
         )
     )
 
     fun getRooms(): Flow<List<Room>> = rooms
 
-    fun getDevicesForRoom(roomId: String): Flow<List<Device>> = devices.map { deviceList -> 
+    fun getDevicesForRoom(roomId: RoomId): Flow<List<Device>> = devices.map { deviceList -> 
         deviceList.filter { device -> device.roomId == roomId } 
     }
 
