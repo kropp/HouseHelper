@@ -5,6 +5,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navigation
+import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
@@ -12,6 +13,10 @@ import com.kotlinconf.workshop.househelper.navigation.Onboarding
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.StartScreens
 import com.kotlinconf.workshop.househelper.navigation.Welcome
+import com.kotlinconf.workshop.househelper.navigation.DeviceManagement
+import com.kotlinconf.workshop.househelper.device.DeviceManagementScreen
+import com.kotlinconf.workshop.househelper.device.DeviceManagementViewModel
+import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_done
@@ -23,6 +28,7 @@ import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
+import kotlin.reflect.typeOf
 
 @Composable
 @Preview
@@ -43,7 +49,20 @@ fun App() {
                     }
                 }
                 composable<Dashboard> {
-                    DashboardScreen()
+                    DashboardScreen(
+                        onNavigateToDevice = { deviceId ->
+                            navController.navigate(DeviceManagement(deviceId))
+                        }
+                    )
+                }
+                composable<DeviceManagement>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                ) { entry ->
+                    val deviceId = entry.toRoute<DeviceManagement>().deviceId
+                    DeviceManagementScreen(
+                        deviceId = deviceId,
+                        onNavigateUp = { navController.navigateUp() }
+                    )
                 }
             }
         }
@@ -57,6 +76,7 @@ private fun koinConfiguration() = koinConfiguration {
 
     val viewModelModule = module {
         viewModelOf(::DashboardViewModel)
+        viewModelOf(::DeviceManagementViewModel)
     }
 
     modules(appModule, viewModelModule)

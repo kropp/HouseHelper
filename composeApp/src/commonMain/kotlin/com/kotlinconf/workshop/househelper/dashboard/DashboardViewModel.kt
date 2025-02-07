@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 
 
 class DashboardViewModel(
-    private val houseService: HouseService
+    private val houseService: HouseService,
 ) : ViewModel() {
     val rooms: StateFlow<List<Room>> = houseService.getRooms()
         .stateIn(
@@ -31,5 +31,9 @@ class DashboardViewModel(
 
     fun onDeviceClicked(device: Device) {
         houseService.toggleDevice(device)
+    }
+
+    fun onDeviceLongPressed(device: Device) {
+        // Navigation is now handled at the screen level
     }
 }

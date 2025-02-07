@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper.navigation
 
+import com.kotlinconf.workshop.househelper.DeviceId
 import kotlinx.serialization.Serializable
 
 // Start screens
@@ -24,3 +25,9 @@ data object Settings
 
 @Serializable
 data class Light(val name: String)
+
+@Serializable
+data class Camera(val name: String)
+
+@Serializable
+data class DeviceManagement(val deviceId: DeviceId)

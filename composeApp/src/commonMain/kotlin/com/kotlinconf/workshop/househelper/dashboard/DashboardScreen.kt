@@ -3,6 +3,8 @@ package com.kotlinconf.workshop.househelper.dashboard
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,6 +30,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,6 +38,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtLeast
 import com.kotlinconf.workshop.househelper.Device
+import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.Toggleable
@@ -44,6 +48,7 @@ import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
 fun DashboardScreen(
+    onNavigateToDevice: (DeviceId) -> Unit,
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val rooms by viewModel.rooms.collectAsState()
@@ -59,6 +64,9 @@ fun DashboardScreen(
                 room = room,
                 devices = devices,
                 onClick = { viewModel.onDeviceClicked(it) },
+                onLongClick = { device -> 
+                    onNavigateToDevice(device.deviceId)
+                },
             )
         }
     }
@@ -69,7 +77,8 @@ fun DashboardScreen(
 private fun RoomSection(
     room: Room,
     devices: List<Device>,
-    onClick: (Device) -> Unit
+    onClick: (Device) -> Unit,
+    onLongClick: (Device) -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
@@ -90,6 +99,7 @@ private fun RoomSection(
                 DeviceCard(
                     device = device,
                     onClick = { onClick(device) },
+                    onLongClick = { onLongClick(device) },
                 )
             }
         }
@@ -100,6 +110,7 @@ private fun RoomSection(
 private fun DeviceCard(
     device: Device,
     onClick: () -> Unit,
+    onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val cardShape = RoundedCornerShape(12.dp)
@@ -115,7 +126,12 @@ private fun DeviceCard(
                     else -> MaterialTheme.colorScheme.surfaceVariant
                 }
             )
-            .clickable(onClick = onClick)
+            .combinedClickable(
+                interactionSource = remember { MutableInteractionSource() },
+                indication = null,
+                onClick = onClick,
+                onLongClick = onLongClick,
+            )
     ) {
         Column(
             modifier = Modifier.fillMaxSize().padding(8.dp),

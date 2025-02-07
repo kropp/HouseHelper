@@ -6,14 +6,17 @@ import househelper.composeapp.generated.resources.lightbulb
 import househelper.composeapp.generated.resources.switch
 import househelper.composeapp.generated.resources.thermostat
 import househelper.composeapp.generated.resources.camera
+import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import kotlin.jvm.JvmInline
 
 
 @JvmInline
+@Serializable
 value class RoomId(val value: String)
 
 @JvmInline
+@Serializable
 value class DeviceId(val value: String)
 
 data class Room(
