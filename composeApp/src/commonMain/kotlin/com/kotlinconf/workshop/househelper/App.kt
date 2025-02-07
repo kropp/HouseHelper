@@ -20,10 +20,17 @@ import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Info
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
+import househelper.composeapp.generated.resources.onboarding_about_subtitle
 import househelper.composeapp.generated.resources.onboarding_done
+import househelper.composeapp.generated.resources.onboarding_done_subtitle
 import househelper.composeapp.generated.resources.onboarding_welcome
+import househelper.composeapp.generated.resources.onboarding_welcome_subtitle
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
@@ -43,13 +50,28 @@ fun App() {
             NavHost(navController, startDestination = StartScreens) {
                 navigation<StartScreens>(startDestination = Welcome) {
                     composable<Welcome> {
-                        Onboarding(Res.string.onboarding_welcome, { navController.navigate(Onboarding) })
+                        Onboarding(
+                            text = Res.string.onboarding_welcome,
+                            subtitle = Res.string.onboarding_welcome_subtitle,
+                            icon = Icons.Default.Favorite,
+                            onNext = { navController.navigate(Onboarding) }
+                        )
                     }
                     composable<Onboarding> {
-                        Onboarding(Res.string.onboarding_about, { navController.navigate(OnboardingDone) })
+                        Onboarding(
+                            text = Res.string.onboarding_about,
+                            subtitle = Res.string.onboarding_about_subtitle,
+                            icon = Icons.Default.Info,
+                            onNext = { navController.navigate(OnboardingDone) }
+                        )
                     }
                     composable<OnboardingDone> {
-                        Onboarding(Res.string.onboarding_done, { navController.navigate(Dashboard) })
+                        Onboarding(
+                            text = Res.string.onboarding_done,
+                            subtitle = Res.string.onboarding_done_subtitle,
+                            icon = Icons.Default.Home,
+                            onNext = { navController.navigate(Dashboard) }
+                        )
                     }
                 }
                 composable<Dashboard> {

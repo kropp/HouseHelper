@@ -4,8 +4,16 @@
     <string name="humidity">Humidity</string>
     <string name="thermostat">Thermostat</string>
 
-    <string name="onboarding_welcome">Welcome</string>
-    <string name="onboarding_about">Here is our app</string>
-    <string name="onboarding_done">Continue to the app</string>
+    <string name="onboarding_welcome">Welcome to House Helper!</string>
+    <string name="onboarding_welcome_subtitle">Your smart home companion for everyday living</string>
+    <string name="onboarding_about">Control your smart home devices with ease and comfort</string>
+    <string name="onboarding_about_subtitle">Manage lights, temperature, and more from one place</string>
+    <string name="onboarding_done">Your smart home journey begins here</string>
+    <string name="onboarding_done_subtitle">Get ready to experience the future of home automation</string>
     <string name="onboarding_next_button">Next</string>
+
+    <!-- Icons for onboarding screens -->
+    <string name="onboarding_welcome_icon">Welcome screen icon</string>
+    <string name="onboarding_about_icon">About screen icon</string>
+    <string name="onboarding_done_icon">Done screen icon</string>
 </resources>
