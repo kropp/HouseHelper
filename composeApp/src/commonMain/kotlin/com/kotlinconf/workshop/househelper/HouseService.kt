@@ -25,6 +25,7 @@ class HouseService {
             SwitchDevice(name = "Gaming Console", roomId = "living_room"),
             ThermostatDevice(name = "Temperature", roomId = "living_room"),
             HumidityDevice(name = "Humidity", roomId = "living_room"),
+            CameraDevice(name = "Security Camera", roomId = "living_room"),
 
             // Kitchen devices
             LightDevice(name = "Ceiling Light", roomId = "kitchen"),
@@ -34,6 +35,7 @@ class HouseService {
             SwitchDevice(name = "Oven Switch", roomId = "kitchen"),
             SwitchDevice(name = "Dishwasher", roomId = "kitchen"),
             ThermostatDevice(name = "Temperature", roomId = "kitchen"),
+            CameraDevice(name = "Security Camera", roomId = "kitchen"),
 
             // Bathroom devices
             LightDevice(name = "Main Light", roomId = "bathroom"),
@@ -41,7 +43,7 @@ class HouseService {
             LightDevice(name = "Shower Light", roomId = "bathroom"),
             HumidityDevice(name = "Humidity", roomId = "bathroom"),
             ThermostatDevice(name = "Temperature", roomId = "bathroom"),
-            SwitchDevice(name = "Ventilation", roomId = "bathroom"),
+            CameraDevice(name = "Security Camera", roomId = "bathroom"),
 
             // Bedroom devices
             LightDevice(name = "Main Light", roomId = "bedroom"),
@@ -50,7 +52,8 @@ class HouseService {
             SwitchDevice(name = "TV Switch", roomId = "bedroom"),
             SwitchDevice(name = "Air Purifier", roomId = "bedroom"),
             ThermostatDevice(name = "Temperature", roomId = "bedroom"),
-            HumidityDevice(name = "Humidity", roomId = "bedroom")
+            HumidityDevice(name = "Humidity", roomId = "bedroom"),
+            CameraDevice(name = "Security Camera", roomId = "bedroom")
         )
     )
 
@@ -67,6 +70,7 @@ class HouseService {
                     when (currentDevice) {
                         is LightDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
                         is SwitchDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
+                        is CameraDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
                         is HumidityDevice -> currentDevice
                         is ThermostatDevice -> currentDevice
                     }

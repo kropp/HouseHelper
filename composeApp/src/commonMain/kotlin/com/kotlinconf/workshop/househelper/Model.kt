@@ -5,6 +5,7 @@ import househelper.composeapp.generated.resources.humidity
 import househelper.composeapp.generated.resources.lightbulb
 import househelper.composeapp.generated.resources.switch
 import househelper.composeapp.generated.resources.thermostat
+import househelper.composeapp.generated.resources.camera
 import org.jetbrains.compose.resources.DrawableResource
 
 
@@ -48,3 +49,10 @@ data class ThermostatDevice(
     override val iconResource: DrawableResource = Res.drawable.thermostat,
     override val roomId: String
 ) : Device
+
+data class CameraDevice(
+    override val name: String,
+    override val iconResource: DrawableResource = Res.drawable.camera,
+    override val isOn: Boolean = false,
+    override val roomId: String
+) : Device, Toggleable
