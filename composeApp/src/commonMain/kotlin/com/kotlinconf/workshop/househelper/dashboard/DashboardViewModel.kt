@@ -2,7 +2,7 @@ package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.kotlinconf.workshop.househelper.Appliance
+import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.HouseService
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.Toggleable
@@ -21,7 +21,14 @@ class DashboardViewModel(
             initialValue = emptyList()
         )
 
-    fun onApplianceClicked(room: Room, appliance: Appliance) {
-        houseService.toggleAppliance(appliance)
+    fun getDevicesForRoom(roomId: String): StateFlow<List<Device>> = houseService.getDevicesForRoom(roomId)
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5000),
+            initialValue = emptyList()
+        )
+
+    fun onDeviceClicked(device: Device) {
+        houseService.toggleDevice(device)
     }
 }

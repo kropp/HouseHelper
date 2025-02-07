@@ -2,56 +2,78 @@ package com.kotlinconf.workshop.househelper
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 class HouseService {
     private val rooms = MutableStateFlow(
         listOf(
-            Room(
-                name = "Living Room", appliances = listOf(
-                    LightAppliance(name = "Main Light"),
-                    LightAppliance(name = "Floor Lamp"),
-                    SwitchAppliance(name = "TV Switch"),
-                    ThermostatAppliance(name = "Temperature"),
-                )
-            ),
-            Room(
-                name = "Kitchen", appliances = listOf(
-                    LightAppliance(name = "Ceiling Light"),
-                    LightAppliance(name = "Counter Light"),
-                    HumidityAppliance(name = "Humidity"),
-                    SwitchAppliance(name = "Oven Switch"),
-                )
-            ),
-            Room(
-                name = "Bathroom", appliances = listOf(
-                    LightAppliance(name = "Main Light"),
-                    LightAppliance(name = "Mirror Light"),
-                    HumidityAppliance(name = "Humidity"),
-                    ThermostatAppliance(name = "Temperature"),
-                )
-            )
+            Room(id = "living_room", name = "Living Room"),
+            Room(id = "kitchen", name = "Kitchen"),
+            Room(id = "bathroom", name = "Bathroom"),
+            Room(id = "bedroom", name = "Bedroom")
+        )
+    )
+
+    private val devices = MutableStateFlow(
+        listOf(
+            // Living Room devices
+            LightDevice(name = "Main Light", roomId = "living_room"),
+            LightDevice(name = "Floor Lamp", roomId = "living_room"),
+            LightDevice(name = "Reading Light", roomId = "living_room"),
+            SwitchDevice(name = "TV Switch", roomId = "living_room"),
+            SwitchDevice(name = "Gaming Console", roomId = "living_room"),
+            ThermostatDevice(name = "Temperature", roomId = "living_room"),
+            HumidityDevice(name = "Humidity", roomId = "living_room"),
+
+            // Kitchen devices
+            LightDevice(name = "Ceiling Light", roomId = "kitchen"),
+            LightDevice(name = "Counter Light", roomId = "kitchen"),
+            LightDevice(name = "Under Cabinet Light", roomId = "kitchen"),
+            HumidityDevice(name = "Humidity", roomId = "kitchen"),
+            SwitchDevice(name = "Oven Switch", roomId = "kitchen"),
+            SwitchDevice(name = "Dishwasher", roomId = "kitchen"),
+            ThermostatDevice(name = "Temperature", roomId = "kitchen"),
+
+            // Bathroom devices
+            LightDevice(name = "Main Light", roomId = "bathroom"),
+            LightDevice(name = "Mirror Light", roomId = "bathroom"),
+            LightDevice(name = "Shower Light", roomId = "bathroom"),
+            HumidityDevice(name = "Humidity", roomId = "bathroom"),
+            ThermostatDevice(name = "Temperature", roomId = "bathroom"),
+            SwitchDevice(name = "Ventilation", roomId = "bathroom"),
+
+            // Bedroom devices
+            LightDevice(name = "Main Light", roomId = "bedroom"),
+            LightDevice(name = "Bedside Lamp Left", roomId = "bedroom"),
+            LightDevice(name = "Bedside Lamp Right", roomId = "bedroom"),
+            SwitchDevice(name = "TV Switch", roomId = "bedroom"),
+            SwitchDevice(name = "Air Purifier", roomId = "bedroom"),
+            ThermostatDevice(name = "Temperature", roomId = "bedroom"),
+            HumidityDevice(name = "Humidity", roomId = "bedroom")
         )
     )
 
     fun getRooms(): Flow<List<Room>> = rooms
 
-    fun toggleAppliance(appliance: Appliance) {
-        val currentRooms = rooms.value
-        val updatedRooms = currentRooms.map { room ->
-            val updatedAppliances = room.appliances.map { currentAppliance ->
-                if (currentAppliance === appliance) {
-                    when (appliance) {
-                        is LightAppliance -> appliance.copy(isOn = !appliance.isOn)
-                        is SwitchAppliance -> appliance.copy(isOn = !appliance.isOn)
-                        is HumidityAppliance -> appliance
-                        is ThermostatAppliance -> appliance
+    fun getDevicesForRoom(roomId: String): Flow<List<Device>> = devices.map { deviceList -> 
+        deviceList.filter { device -> device.roomId == roomId } 
+    }
+
+    fun toggleDevice(device: Device) {
+        devices.update { currentDevices ->
+            currentDevices.map { currentDevice ->
+                if (currentDevice === device) {
+                    when (currentDevice) {
+                        is LightDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
+                        is SwitchDevice -> currentDevice.copy(isOn = !currentDevice.isOn)
+                        is HumidityDevice -> currentDevice
+                        is ThermostatDevice -> currentDevice
                     }
                 } else {
-                    currentAppliance
+                    currentDevice
                 }
             }
-            room.copy(appliances = updatedAppliances)
         }
-        rooms.value = updatedRooms
     }
 }

@@ -7,38 +7,44 @@ import househelper.composeapp.generated.resources.switch
 import househelper.composeapp.generated.resources.thermostat
 import org.jetbrains.compose.resources.DrawableResource
 
+
 data class Room(
+    val id: String,
     val name: String,
-    val appliances: List<Appliance>
 )
 
 interface Toggleable {
     val isOn: Boolean
 }
 
-sealed interface Appliance {
+sealed interface Device {
     val name: String
     val iconResource: DrawableResource
+    val roomId: String
 }
 
-data class LightAppliance(
+data class LightDevice(
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.lightbulb,
-    override val isOn: Boolean = false
-) : Appliance, Toggleable
+    override val isOn: Boolean = false,
+    override val roomId: String
+) : Device, Toggleable
 
-data class SwitchAppliance(
+data class SwitchDevice(
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.switch,
-    override val isOn: Boolean = false
-) : Appliance, Toggleable
+    override val isOn: Boolean = false,
+    override val roomId: String
+) : Device, Toggleable
 
-data class HumidityAppliance(
+data class HumidityDevice(
     override val name: String,
-    override val iconResource: DrawableResource = Res.drawable.humidity
-) : Appliance
+    override val iconResource: DrawableResource = Res.drawable.humidity,
+    override val roomId: String
+) : Device
 
-data class ThermostatAppliance(
+data class ThermostatDevice(
     override val name: String,
-    override val iconResource: DrawableResource = Res.drawable.thermostat
-) : Appliance
+    override val iconResource: DrawableResource = Res.drawable.thermostat,
+    override val roomId: String
+) : Device
