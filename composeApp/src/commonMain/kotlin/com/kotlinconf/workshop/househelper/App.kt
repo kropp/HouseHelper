@@ -24,11 +24,12 @@ import househelper.composeapp.generated.resources.onboarding_welcome
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
-import org.koin.core.module.dsl.singleOf
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
 import kotlin.reflect.typeOf
+import com.kotlinconf.workshop.househelper.data.HouseService
+import com.kotlinconf.workshop.househelper.data.DemoHouseService
 
 @Composable
 @Preview
@@ -71,7 +72,7 @@ fun App() {
 
 private fun koinConfiguration() = koinConfiguration {
     val appModule = module {
-        singleOf(::HouseService)
+        single<HouseService> { DemoHouseService() }
     }
 
     val viewModelModule = module {
