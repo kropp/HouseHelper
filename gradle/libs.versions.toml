@@ -8,13 +8,14 @@ androidx-appcompat = "1.7.0"
 androidx-core-ktx = "1.15.0"
 androidx-espresso-core = "3.6.1"
 androidx-lifecycle = "2.8.4"
+androidx-navigation = "2.8.0-alpha12"
 androidx-test-junit = "1.2.1"
 junit = "4.13.2"
 kotlinx-coroutines = "1.10.1"
+kotlinx-serialization = "1.8.0"
 
 kotlin = "2.1.20-Beta2"
 
-compose-android = "1.7.6"
 compose-multiplatform = "1.8.0-alpha02"
 compose-hot-reload = "1.0.0-dev.34.1"
 
@@ -29,7 +30,9 @@ androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version
 androidx-activity-compose = { module = "androidx.activity:activity-compose", version.ref = "androidx-activityCompose" }
 androidx-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "androidx-lifecycle" }
 androidx-lifecycle-runtime-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime-compose", version.ref = "androidx-lifecycle" }
+androidx-navigation-compose = { module = "org.jetbrains.androidx.navigation:navigation-compose", version.ref = "androidx-navigation" }
 kotlinx-coroutines-swing = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-swing", version.ref = "kotlinx-coroutines" }
+kotlinx-serialization = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
 
 [plugins]
 androidApplication = { id = "com.android.application", version.ref = "agp" }
@@ -37,4 +40,5 @@ androidLibrary = { id = "com.android.library", version.ref = "agp" }
 composeMultiplatform = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 composeCompiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 kotlinMultiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
+kotlinSerialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 composeHotReload = { id = "org.jetbrains.compose-hot-reload", version.ref = "compose-hot-reload" }
