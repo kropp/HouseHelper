@@ -23,18 +23,21 @@ class DemoHouseService : HouseService {
                 deviceId = DeviceId("living_room_main_light"),
                 name = "Main Light",
                 roomId = RoomId("living_room"),
-                isOn = true
+                isOn = true,
+                brightness = 85
             ),
             LightDevice(
                 deviceId = DeviceId("living_room_floor_lamp"),
                 name = "Floor Lamp",
-                roomId = RoomId("living_room")
+                roomId = RoomId("living_room"),
+                brightness = 0
             ),
             LightDevice(
                 deviceId = DeviceId("living_room_reading_light"),
                 name = "Reading Light",
                 roomId = RoomId("living_room"),
-                isOn = true
+                isOn = true,
+                brightness = 65
             ),
             SwitchDevice(
                 deviceId = DeviceId("living_room_tv_switch"),
@@ -68,19 +71,22 @@ class DemoHouseService : HouseService {
             LightDevice(
                 deviceId = DeviceId("kitchen_ceiling_light"),
                 name = "Ceiling Light",
-                roomId = RoomId("kitchen")
+                roomId = RoomId("kitchen"),
+                brightness = 0
             ),
             LightDevice(
                 deviceId = DeviceId("kitchen_counter_light"),
                 name = "Counter Light",
                 roomId = RoomId("kitchen"),
-                isOn = true
+                isOn = true,
+                brightness = 90
             ),
             LightDevice(
                 deviceId = DeviceId("kitchen_under_cabinet_light"),
                 name = "Under Cabinet Light",
                 roomId = RoomId("kitchen"),
-                isOn = true
+                isOn = true,
+                brightness = 75
             ),
             HumidityDevice(deviceId = DeviceId("kitchen_humidity"), name = "Humidity", roomId = RoomId("kitchen")),
             SwitchDevice(deviceId = DeviceId("kitchen_oven_switch"), name = "Oven Switch", roomId = RoomId("kitchen")),
@@ -106,18 +112,21 @@ class DemoHouseService : HouseService {
                 deviceId = DeviceId("bathroom_main_light"),
                 name = "Main Light",
                 roomId = RoomId("bathroom"),
-                isOn = true
+                isOn = true,
+                brightness = 95
             ),
             LightDevice(
                 deviceId = DeviceId("bathroom_mirror_light"),
                 name = "Mirror Light",
                 roomId = RoomId("bathroom"),
-                isOn = true
+                isOn = true,
+                brightness = 80
             ),
             LightDevice(
                 deviceId = DeviceId("bathroom_shower_light"),
                 name = "Shower Light",
-                roomId = RoomId("bathroom")
+                roomId = RoomId("bathroom"),
+                brightness = 0
             ),
             HumidityDevice(deviceId = DeviceId("bathroom_humidity"), name = "Humidity", roomId = RoomId("bathroom")),
             ThermostatDevice(
@@ -132,17 +141,24 @@ class DemoHouseService : HouseService {
             ),
 
             // Bedroom devices
-            LightDevice(deviceId = DeviceId("bedroom_main_light"), name = "Main Light", roomId = RoomId("bedroom")),
+            LightDevice(
+                deviceId = DeviceId("bedroom_main_light"),
+                name = "Main Light",
+                roomId = RoomId("bedroom"),
+                brightness = 0
+            ),
             LightDevice(
                 deviceId = DeviceId("bedroom_bedside_lamp_left"),
                 name = "Bedside Lamp Left",
                 roomId = RoomId("bedroom"),
-                isOn = true
+                isOn = true,
+                brightness = 45
             ),
             LightDevice(
                 deviceId = DeviceId("bedroom_bedside_lamp_right"),
                 name = "Bedside Lamp Right",
-                roomId = RoomId("bedroom")
+                roomId = RoomId("bedroom"),
+                brightness = 0
             ),
             SwitchDevice(deviceId = DeviceId("bedroom_tv_switch"), name = "TV Switch", roomId = RoomId("bedroom")),
             SwitchDevice(
@@ -172,7 +188,7 @@ class DemoHouseService : HouseService {
     }
 
     override fun getDevice(deviceId: DeviceId): Flow<Device?> = devices.map { deviceList ->
-        deviceList.find { device -> device.deviceId == deviceId }
+        deviceList.find { device -> device.deviceId.value == deviceId.value }
     }
 
     override fun updateDevice(device: Device) {

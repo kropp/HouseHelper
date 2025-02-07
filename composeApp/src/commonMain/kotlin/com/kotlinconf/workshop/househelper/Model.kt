@@ -1,11 +1,11 @@
 package com.kotlinconf.workshop.househelper
 
 import househelper.composeapp.generated.resources.Res
+import househelper.composeapp.generated.resources.camera
 import househelper.composeapp.generated.resources.humidity
 import househelper.composeapp.generated.resources.lightbulb
 import househelper.composeapp.generated.resources.switch
 import househelper.composeapp.generated.resources.thermostat
-import househelper.composeapp.generated.resources.camera
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import kotlin.jvm.JvmInline
@@ -13,11 +13,15 @@ import kotlin.jvm.JvmInline
 
 @JvmInline
 @Serializable
-value class RoomId(val value: String)
+value class RoomId(val value: String) {
+    override fun toString(): String = value
+}
 
 @JvmInline
 @Serializable
-value class DeviceId(val value: String)
+value class DeviceId(val value: String) {
+    override fun toString(): String = value
+}
 
 data class Room(
     val id: RoomId,
@@ -40,7 +44,8 @@ data class LightDevice(
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.lightbulb,
     override val isOn: Boolean = false,
-    override val roomId: RoomId
+    override val roomId: RoomId,
+    val brightness: Int = 100
 ) : Device, Toggleable
 
 data class SwitchDevice(
