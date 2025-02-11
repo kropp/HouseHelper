@@ -1,12 +1,50 @@
 package com.kotlinconf.workshop.househelper.data
 
 import com.kotlinconf.workshop.househelper.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlin.random.Random
 
 class DemoHouseService : HouseService {
+    private val scope = CoroutineScope(Dispatchers.Default)
+
+    init {
+        startPeriodicSensorUpdates()
+    }
+
+    private fun startPeriodicSensorUpdates() {
+        scope.launch {
+            while (true) {
+                delay(5000) // 15 seconds
+                devices.update { deviceList ->
+                    deviceList.map { device ->
+                        when (device) {
+                            is HumidityDevice -> {
+                                val change = Random.nextFloat() * 4f - 2f // Random value between -2 and 2
+                                device.copy(
+                                    currentValue = (device.currentValue + change).coerceIn(DeviceConstants.Humidity.MIN_HUMIDITY, DeviceConstants.Humidity.MAX_HUMIDITY)
+                                )
+                            }
+                            is ThermostatDevice -> {
+                                val change = Random.nextFloat() * 4f - 2f // Random value between -2 and 2
+                                device.copy(
+                                    currentValue = (device.currentValue + change).coerceIn(DeviceConstants.Thermostat.MIN_TEMPERATURE, DeviceConstants.Thermostat.MAX_TEMPERATURE)
+                                )
+                            }
+                            else -> device
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     private val rooms = MutableStateFlow(
         listOf(
             Room(id = RoomId("living_room"), name = "Living Room"),
@@ -24,7 +62,8 @@ class DemoHouseService : HouseService {
                 name = "Main Light",
                 roomId = RoomId("living_room"),
                 isOn = true,
-                brightness = 85
+                brightness = 85,
+                color = DeviceConstants.Light.PREDEFINED_COLORS[2] // Orange
             ),
             LightDevice(
                 deviceId = DeviceId("living_room_floor_lamp"),
@@ -37,7 +76,8 @@ class DemoHouseService : HouseService {
                 name = "Reading Light",
                 roomId = RoomId("living_room"),
                 isOn = true,
-                brightness = 65
+                brightness = 65,
+                color = DeviceConstants.Light.PREDEFINED_COLORS[7] // Pink
             ),
             SwitchDevice(
                 deviceId = DeviceId("living_room_tv_switch"),
@@ -79,7 +119,8 @@ class DemoHouseService : HouseService {
                 name = "Counter Light",
                 roomId = RoomId("kitchen"),
                 isOn = true,
-                brightness = 90
+                brightness = 90,
+                color = DeviceConstants.Light.PREDEFINED_COLORS[5] // Blue
             ),
             LightDevice(
                 deviceId = DeviceId("kitchen_under_cabinet_light"),

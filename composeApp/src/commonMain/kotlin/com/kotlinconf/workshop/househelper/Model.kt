@@ -39,14 +39,25 @@ sealed interface Device {
     val roomId: RoomId
 }
 
+interface Sensor {
+    var currentValue: Float
+}
+
 data class LightDevice(
     override val deviceId: DeviceId,
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.lightbulb,
     override val isOn: Boolean = false,
     override val roomId: RoomId,
-    val brightness: Int = 100
-) : Device, Toggleable
+    val brightness: Int = 50,
+    val color: RGBColor = DeviceConstants.Light.DEFAULT_COLOR
+) : Device, Toggleable {
+    init {
+        require(brightness in DeviceConstants.Light.MIN_BRIGHTNESS..DeviceConstants.Light.MAX_BRIGHTNESS) { 
+            "Brightness must be between ${DeviceConstants.Light.MIN_BRIGHTNESS} and ${DeviceConstants.Light.MAX_BRIGHTNESS}" 
+        }
+    }
+}
 
 data class SwitchDevice(
     override val deviceId: DeviceId,
@@ -60,15 +71,29 @@ data class HumidityDevice(
     override val deviceId: DeviceId,
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.humidity,
-    override val roomId: RoomId
-) : Device
+    override val roomId: RoomId,
+    override var currentValue: Float = 50f
+) : Device, Sensor {
+    init {
+        require(currentValue in DeviceConstants.Humidity.MIN_HUMIDITY..DeviceConstants.Humidity.MAX_HUMIDITY) {
+            "Humidity must be between ${DeviceConstants.Humidity.MIN_HUMIDITY}% and ${DeviceConstants.Humidity.MAX_HUMIDITY}%"
+        }
+    }
+}
 
 data class ThermostatDevice(
     override val deviceId: DeviceId,
     override val name: String,
     override val iconResource: DrawableResource = Res.drawable.thermostat,
-    override val roomId: RoomId
-) : Device
+    override val roomId: RoomId,
+    override var currentValue: Float = 20f
+) : Device, Sensor {
+    init {
+        require(currentValue in DeviceConstants.Thermostat.MIN_TEMPERATURE..DeviceConstants.Thermostat.MAX_TEMPERATURE) {
+            "Temperature must be between ${DeviceConstants.Thermostat.MIN_TEMPERATURE}°C and ${DeviceConstants.Thermostat.MAX_TEMPERATURE}°C"
+        }
+    }
+}
 
 data class CameraDevice(
     override val deviceId: DeviceId,

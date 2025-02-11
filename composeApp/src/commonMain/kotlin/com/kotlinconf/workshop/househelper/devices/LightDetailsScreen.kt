@@ -1,8 +1,15 @@
 package com.kotlinconf.workshop.househelper.devices
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -27,6 +34,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -35,8 +44,10 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.LightDevice
+import com.kotlinconf.workshop.househelper.RGBColor
 import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
@@ -79,16 +90,12 @@ fun LightDetailsScreen(
                 var localBrightness by remember { mutableIntStateOf(light.brightness) }
 
                 LaunchedEffect(localBrightness) {
-                    if (light.isOn) {
-                        delay(100)
-                        viewModel.updateBrightness(localBrightness)
-                    }
+                    viewModel.updateBrightness(localBrightness)
                 }
 
                 Text(
                     text = "Brightness: ${localBrightness.toInt()}%",
-                    style = MaterialTheme.typography.bodyLarge,
-                    modifier = Modifier.graphicsLayer { alpha = if (light.isOn) 1f else 0.5f }
+                    style = MaterialTheme.typography.bodyLarge
                 )
 
                 Box(
@@ -97,40 +104,95 @@ fun LightDetailsScreen(
                         .height(400.dp)
                         .clip(RoundedCornerShape(24.dp))
                         .background(MaterialTheme.colorScheme.surface)
-                        .graphicsLayer { alpha = if (light.isOn) 1f else 0.5f }
-                        .let { modifier ->
-                            if (light.isOn) {
-                                modifier.pointerInput(Unit) {
-                                    awaitPointerEventScope {
-                                        while (true) {
-                                            val event = awaitPointerEvent()
-                                            val position = event.changes.first().position
-                                            when (event.type) {
-                                                androidx.compose.ui.input.pointer.PointerEventType.Press -> {
-                                                    val newBrightness = ((1f - position.y / size.height) * 100f).toInt()
-                                                    localBrightness = newBrightness.coerceIn(0, 100)
-                                                }
-                                                androidx.compose.ui.input.pointer.PointerEventType.Move -> {
-                                                    if (event.changes.first().pressed) {
-                                                        val newBrightness = ((1f - position.y / size.height) * 100f).toInt()
-                                                        localBrightness = newBrightness.coerceIn(0, 100)
-                                                    }
-                                                }
-                                                else -> Unit
+                        .pointerInput(Unit) {
+                            awaitPointerEventScope {
+                                while (true) {
+                                    val event = awaitPointerEvent()
+                                    val position = event.changes.first().position
+                                    when (event.type) {
+                                        androidx.compose.ui.input.pointer.PointerEventType.Press,
+                                        androidx.compose.ui.input.pointer.PointerEventType.Move -> {
+                                            if (event.changes.first().pressed) {
+                                                val newBrightness = ((1f - position.y / size.height) * DeviceConstants.Light.MAX_BRIGHTNESS).toInt()
+                                                localBrightness = newBrightness.coerceIn(DeviceConstants.Light.MIN_BRIGHTNESS, DeviceConstants.Light.MAX_BRIGHTNESS)
                                             }
                                         }
+                                        else -> Unit
                                     }
                                 }
-                            } else modifier
+                            }
                         }
                 ) {
+                    // Min indicator
+                    Text(
+                        text = "100%",
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .padding(top = 4.dp)
+                    )
+
+                    // Max indicator
+                    Text(
+                        text = "0%",
+                        style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 4.dp)
+                    )
+
+                    val animatedHeight by animateFloatAsState(
+                        targetValue = localBrightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS,
+                        animationSpec = tween(durationMillis = 200),
+                        label = "brightness height"
+                    )
+                    val animatedAlpha by animateFloatAsState(
+                        targetValue = if (light.isOn) 1f else 0.5f,
+                        animationSpec = tween(durationMillis = 200),
+                        label = "brightness alpha"
+                    )
                     Box(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .height(400.dp * (localBrightness.toFloat() / 100f))
-                            .background(MaterialTheme.colorScheme.primaryContainer)
+                            .height(400.dp * animatedHeight)
+                            .background(
+                                color = Color(
+                                    red = light.color.red,
+                                    green = light.color.green,
+                                    blue = light.color.blue,
+                                    alpha = (255 * animatedAlpha).toInt()
+                                )
+                            )
                             .align(Alignment.BottomCenter)
                     )
+                }
+
+                Text(
+                    text = "Color",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
+
+                LazyVerticalGrid(
+                    columns = GridCells.Fixed(4),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
+                    items(DeviceConstants.Light.PREDEFINED_COLORS) { color ->
+                        Box(
+                            modifier = Modifier
+                                .aspectRatio(1f)
+                                .clip(RoundedCornerShape(8.dp))
+                                .background(Color(color.red, color.green, color.blue))
+                                .border(
+                                    width = 2.dp,
+                                    color = if (color == light.color) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = RoundedCornerShape(8.dp)
+                                )
+                                .clickable { viewModel.updateColor(color) }
+                        )
+                    }
                 }
             }
         }
@@ -172,6 +234,12 @@ class LightDetailsViewModel(
     fun updateBrightness(brightness: Int) {
         light.value?.let { light ->
             houseService.updateDevice(light.copy(brightness = brightness))
+        }
+    }
+
+    fun updateColor(color: RGBColor) {
+        light.value?.let { light ->
+            houseService.updateDevice(light.copy(color = color))
         }
     }
 }

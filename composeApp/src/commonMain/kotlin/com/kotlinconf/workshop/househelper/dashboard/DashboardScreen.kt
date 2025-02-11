@@ -55,12 +55,17 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.graphics.graphicsLayer
 import com.kotlinconf.workshop.househelper.Device
+import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.Toggleable
 import com.kotlinconf.workshop.househelper.LightDevice
 import com.kotlinconf.workshop.househelper.CameraDevice
+import com.kotlinconf.workshop.househelper.HumidityDevice
+import com.kotlinconf.workshop.househelper.ThermostatDevice
+import com.kotlinconf.workshop.househelper.Sensor
+import kotlin.math.roundToInt
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 
@@ -179,14 +184,29 @@ private fun DeviceCard(
                 onClick = onClick,
             )
     ) {
-        if (device is LightDevice && device.isOn) {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(140.dp * (device.brightness.toFloat() / 100f))
-                    .background(backgroundColor)
-                    .align(Alignment.BottomCenter)
-            )
+        if (device is LightDevice) {
+            if (device.isOn) {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(140.dp * (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS))
+                        .background(
+                            Color(
+                                red = device.color.red,
+                                green = device.color.green,
+                                blue = device.color.blue,
+                                alpha = (255 * 0.7f).toInt()
+                            )
+                        )
+                        .align(Alignment.BottomCenter)
+                )
+            } else {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(backgroundColor)
+                )
+            }
         } else {
             Box(
                 modifier = Modifier
@@ -246,6 +266,42 @@ private fun DeviceCard(
                             text = "View more",
                             style = MaterialTheme.typography.labelSmall,
                             color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
+                        )
+                    }
+                }
+                is ThermostatDevice -> {
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${device.currentValue.roundToInt()}°C",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                is HumidityDevice -> {
+                    Divider(
+                        modifier = Modifier.fillMaxWidth(),
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 12.dp),
+                        contentAlignment = Alignment.Center
+                    ) {
+                        Text(
+                            text = "${device.currentValue.roundToInt()}%",
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.primary
                         )
                     }
                 }
