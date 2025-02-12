@@ -8,6 +8,7 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -88,11 +89,12 @@ fun DashboardScreen(
                 room = room,
                 devices = devices,
                 onClick = { viewModel.onDeviceClicked(it) },
-                onLongClick = { device -> 
+                onLongClick = { device ->
                     when (device) {
                         is LightDevice -> onNavigateToLightDetails(device.deviceId)
                         is CameraDevice -> onNavigateToCameraDetails(device.deviceId)
-                        else -> { /* Other device types are not navigable */ }
+                        else -> { /* Other device types are not navigable */
+                        }
                     }
                 },
             )
@@ -185,28 +187,24 @@ private fun DeviceCard(
             )
     ) {
         if (device is LightDevice) {
-            if (device.isOn) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(140.dp * (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS))
-                        .background(
-                            Color(
-                                red = device.color.red,
-                                green = device.color.green,
-                                blue = device.color.blue,
-                                alpha = (255 * 0.7f).toInt()
-                            )
+            val height by animateDpAsState(
+                if (device.isOn) 0.dp
+                else 140.dp * (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
+            )
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(height)
+                    .background(
+                        Color(
+                            red = device.color.red,
+                            green = device.color.green,
+                            blue = device.color.blue,
+                            alpha = (255 * 0.7f).toInt()
                         )
-                        .align(Alignment.BottomCenter)
-                )
-            } else {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(backgroundColor)
-                )
-            }
+                    )
+                    .align(Alignment.BottomCenter)
+            )
         } else {
             Box(
                 modifier = Modifier
@@ -269,6 +267,7 @@ private fun DeviceCard(
                         )
                     }
                 }
+
                 is ThermostatDevice -> {
                     Divider(
                         modifier = Modifier.fillMaxWidth(),
@@ -287,6 +286,7 @@ private fun DeviceCard(
                         )
                     }
                 }
+
                 is HumidityDevice -> {
                     Divider(
                         modifier = Modifier.fillMaxWidth(),
@@ -305,7 +305,9 @@ private fun DeviceCard(
                         )
                     }
                 }
-                else -> { /* Other device types are not navigable */ }
+
+                else -> { /* Other device types are not navigable */
+                }
             }
         }
     }
