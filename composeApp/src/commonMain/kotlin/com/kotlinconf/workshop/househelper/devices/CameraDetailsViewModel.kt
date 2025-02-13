@@ -23,7 +23,7 @@ class CameraDetailsViewModel(
 
     fun toggleCamera(deviceId: DeviceId) {
         getCamera(deviceId).value?.let { camera ->
-            houseService.toggleCamera(camera)
+            houseService.toggle(camera)
         }
     }
 }
