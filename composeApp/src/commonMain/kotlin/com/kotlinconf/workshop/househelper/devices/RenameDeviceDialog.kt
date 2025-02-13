@@ -19,6 +19,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.text.TextRange
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.Device
@@ -37,7 +42,19 @@ fun RenameLightDialog(
     currentName: String,
     onDismiss: (newName: String?) -> Unit,
 ) {
-    var newName by remember { mutableStateOf(currentName) }
+    var textFieldValue by remember { 
+        mutableStateOf(
+            TextFieldValue(
+                text = currentName,
+                selection = TextRange(currentName.length)
+            )
+        ) 
+    }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) {
+        focusRequester.requestFocus()
+    }
 
     Surface(
         color = MaterialTheme.colorScheme.surface,
@@ -55,10 +72,11 @@ fun RenameLightDialog(
             )
 
             OutlinedTextField(
-                value = newName,
-                onValueChange = { newName = it },
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
                 label = { Text("Name") },
-                singleLine = true
+                singleLine = true,
+                modifier = Modifier.focusRequester(focusRequester)
             )
 
             Row(
@@ -71,7 +89,7 @@ fun RenameLightDialog(
                 }
                 TextButton(
                     onClick = {
-                        onDismiss(newName)
+                        onDismiss(textFieldValue.text)
                     }
                 ) {
                     Text("Rename")
