@@ -1,6 +1,13 @@
 package com.kotlinconf.workshop.househelper
 
 import androidx.compose.runtime.Composable
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -46,61 +53,74 @@ import com.kotlinconf.workshop.househelper.data.DemoHouseService
 fun App() {
     KoinMultiplatformApplication(koinConfiguration()) {
         DevelopmentEntryPoint {
-            val navController = rememberNavController()
-            NavHost(navController, startDestination = StartScreens) {
-                navigation<StartScreens>(startDestination = Welcome) {
-                    composable<Welcome> {
-                        Onboarding(
-                            text = Res.string.onboarding_welcome,
-                            subtitle = Res.string.onboarding_welcome_subtitle,
-                            icon = Icons.Default.Favorite,
-                            onNext = { navController.navigate(Onboarding) }
-                        )
-                    }
-                    composable<Onboarding> {
-                        Onboarding(
-                            text = Res.string.onboarding_about,
-                            subtitle = Res.string.onboarding_about_subtitle,
-                            icon = Icons.Default.Info,
-                            onNext = { navController.navigate(OnboardingDone) }
-                        )
-                    }
-                    composable<OnboardingDone> {
-                        Onboarding(
-                            text = Res.string.onboarding_done,
-                            subtitle = Res.string.onboarding_done_subtitle,
-                            icon = Icons.Default.Home,
-                            onNext = { navController.navigate(Dashboard) }
-                        )
-                    }
+            MaterialTheme(
+                colorScheme = if (isSystemInDarkTheme()) {
+                    darkColorScheme()
+                } else {
+                    lightColorScheme()
                 }
-                composable<Dashboard> {
-                    DashboardScreen(
-                        onNavigateToLightDetails = { deviceId ->
-                            navController.navigate(LightDetails(deviceId))
-                        },
-                        onNavigateToCameraDetails = { deviceId ->
-                            navController.navigate(CameraDetails(deviceId))
+            ) {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val navController = rememberNavController()
+                    NavHost(navController, startDestination = StartScreens) {
+                        navigation<StartScreens>(startDestination = Welcome) {
+                            composable<Welcome> {
+                                Onboarding(
+                                    text = Res.string.onboarding_welcome,
+                                    subtitle = Res.string.onboarding_welcome_subtitle,
+                                    icon = Icons.Default.Favorite,
+                                    onNext = { navController.navigate(Onboarding) }
+                                )
+                            }
+                            composable<Onboarding> {
+                                Onboarding(
+                                    text = Res.string.onboarding_about,
+                                    subtitle = Res.string.onboarding_about_subtitle,
+                                    icon = Icons.Default.Info,
+                                    onNext = { navController.navigate(OnboardingDone) }
+                                )
+                            }
+                            composable<OnboardingDone> {
+                                Onboarding(
+                                    text = Res.string.onboarding_done,
+                                    subtitle = Res.string.onboarding_done_subtitle,
+                                    icon = Icons.Default.Home,
+                                    onNext = { navController.navigate(Dashboard) }
+                                )
+                            }
                         }
-                    )
-                }
-                composable<LightDetails>(
-                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
-                    val deviceId = it.toRoute<LightDetails>().deviceId
-                    LightDetailsScreen(
-                        deviceId = deviceId,
-                        onNavigateUp = { navController.navigateUp() }
-                    )
-                }
-                composable<CameraDetails>(
-                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
-                    val deviceId = it.toRoute<CameraDetails>().deviceId
-                    CameraDetailsScreen(
-                        deviceId = deviceId,
-                        onNavigateUp = { navController.navigateUp() }
-                    )
+                        composable<Dashboard> {
+                            DashboardScreen(
+                                onNavigateToLightDetails = { deviceId ->
+                                    navController.navigate(LightDetails(deviceId))
+                                },
+                                onNavigateToCameraDetails = { deviceId ->
+                                    navController.navigate(CameraDetails(deviceId))
+                                }
+                            )
+                        }
+                        composable<LightDetails>(
+                            typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                        ) {
+                            val deviceId = it.toRoute<LightDetails>().deviceId
+                            LightDetailsScreen(
+                                deviceId = deviceId,
+                                onNavigateUp = { navController.navigateUp() }
+                            )
+                        }
+                        composable<CameraDetails>(
+                            typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                        ) {
+                            val deviceId = it.toRoute<CameraDetails>().deviceId
+                            CameraDetailsScreen(
+                                deviceId = deviceId,
+                                onNavigateUp = { navController.navigateUp() }
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -53,6 +53,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.border
 import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.graphics.graphicsLayer
 import com.kotlinconf.workshop.househelper.Device
@@ -180,6 +181,11 @@ private fun DeviceCard(
             .widthIn(max = 140.dp)
             .height(140.dp)
             .background(MaterialTheme.colorScheme.surface)
+            .border(
+                width = 2.dp,
+                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                shape = cardShape
+            )
             .clickable(
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null,
