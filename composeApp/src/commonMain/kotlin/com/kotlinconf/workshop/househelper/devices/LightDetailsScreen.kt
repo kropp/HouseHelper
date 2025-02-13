@@ -19,6 +19,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -42,18 +43,9 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
-import com.kotlinconf.workshop.househelper.LightDevice
-import com.kotlinconf.workshop.househelper.RGBColor
-import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -61,10 +53,18 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun LightDetailsScreen(
     deviceId: DeviceId,
+    newName: String?,
     onNavigateUp: () -> Unit,
+    onNavigateToRename: (String) -> Unit = {},
     viewModel: LightDetailsViewModel = koinViewModel { parametersOf(deviceId) }
 ) {
-    val device by viewModel.light.collectAsState(null)
+    val device = viewModel.light.collectAsState().value
+
+    LaunchedEffect(device, newName) {
+        if (device != null && newName != null && device.name != newName) {
+            viewModel.renameLightDevice(newName)
+        }
+    }
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -75,6 +75,13 @@ fun LightDetailsScreen(
             navigationIcon = {
                 IconButton(onClick = onNavigateUp) {
                     Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                }
+            },
+            actions = {
+                IconButton(
+                    onClick = { device?.name?.let(onNavigateToRename) }
+                ) {
+                    Icon(Icons.Default.Edit, contentDescription = "Edit name")
                 }
             }
         )
@@ -163,11 +170,8 @@ fun LightDetailsScreen(
                             .fillMaxWidth()
                             .height(400.dp * animatedHeight)
                             .background(
-                                color = Color(
-                                    red = light.color.red,
-                                    green = light.color.green,
-                                    blue = light.color.blue,
-                                    alpha = (255 * animatedAlpha).toInt()
+                                color = light.color.copy(
+                                    alpha = animatedAlpha
                                 )
                             )
                             .align(Alignment.BottomCenter)
@@ -191,7 +195,7 @@ fun LightDetailsScreen(
                             modifier = Modifier
                                 .aspectRatio(1f)
                                 .clip(RoundedCornerShape(8.dp))
-                                .background(Color(color.red, color.green, color.blue))
+                                .background(color)
                                 .border(
                                     width = 2.dp,
                                     color = if (color == light.color) MaterialTheme.colorScheme.primary else Color.Transparent,
@@ -216,37 +220,6 @@ fun LightDetailsScreen(
                     onCheckedChange = { viewModel.toggleLight() }
                 )
             }
-        }
-    }
-}
-
-class LightDetailsViewModel(
-    private val houseService: HouseService,
-    deviceId: DeviceId,
-) : ViewModel() {
-    val light: StateFlow<LightDevice?> = houseService.getDevice(deviceId)
-        .map { device -> device as? LightDevice }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
-
-    fun toggleLight() {
-        light.value?.let { light ->
-            houseService.updateDevice(light.copy(isOn = !light.isOn))
-        }
-    }
-
-    fun updateBrightness(brightness: Int) {
-        light.value?.let { light ->
-            houseService.updateDevice(light.copy(brightness = brightness))
-        }
-    }
-
-    fun updateColor(color: RGBColor) {
-        light.value?.let { light ->
-            houseService.updateDevice(light.copy(color = color))
         }
     }
 }

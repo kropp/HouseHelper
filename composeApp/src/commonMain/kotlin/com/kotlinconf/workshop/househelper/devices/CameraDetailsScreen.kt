@@ -1,22 +1,25 @@
 package com.kotlinconf.workshop.househelper.devices
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Switch
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.DeviceId
-import com.kotlinconf.workshop.househelper.CameraDevice
-import com.kotlinconf.workshop.househelper.data.HouseService
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -62,20 +65,3 @@ fun CameraDetailsScreen(
     }
 }
 
-class CameraDetailsViewModel(
-    private val houseService: HouseService,
-) : ViewModel() {
-    fun getCamera(deviceId: DeviceId): StateFlow<CameraDevice?> = houseService.getDevice(deviceId)
-        .map { it as? CameraDevice }
-        .stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5000),
-            initialValue = null
-        )
-
-    fun toggleCamera(deviceId: DeviceId) {
-        getCamera(deviceId).value?.let { camera ->
-            houseService.updateDevice(camera.copy(isOn = !camera.isOn))
-        }
-    }
-}

@@ -1,36 +1,42 @@
 package com.kotlinconf.workshop.househelper
 
-import androidx.compose.runtime.Composable
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.navigation
-import androidx.navigation.toRoute
-import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
-import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
-import com.kotlinconf.workshop.househelper.navigation.Dashboard
-import com.kotlinconf.workshop.househelper.navigation.Onboarding
-import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
-import com.kotlinconf.workshop.househelper.navigation.StartScreens
-import com.kotlinconf.workshop.househelper.navigation.Welcome
-import com.kotlinconf.workshop.househelper.navigation.LightDetails
-import com.kotlinconf.workshop.househelper.navigation.CameraDetails
-import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
-import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
-import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
-import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
-import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
+import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.dialog
+import androidx.navigation.compose.navigation
+import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
+import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
+import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
+import com.kotlinconf.workshop.househelper.data.DemoHouseService
+import com.kotlinconf.workshop.househelper.data.HouseService
+import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
+import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
+import com.kotlinconf.workshop.househelper.devices.RenameLightDialog
+import com.kotlinconf.workshop.househelper.navigation.CameraDetails
+import com.kotlinconf.workshop.househelper.navigation.Dashboard
+import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
+import com.kotlinconf.workshop.househelper.navigation.LightDetails
+import com.kotlinconf.workshop.househelper.navigation.Onboarding
+import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
+import com.kotlinconf.workshop.househelper.navigation.RenameDevice
+import com.kotlinconf.workshop.househelper.navigation.StartScreens
+import com.kotlinconf.workshop.househelper.navigation.Welcome
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_about_subtitle
@@ -45,8 +51,6 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
 import org.koin.dsl.module
 import kotlin.reflect.typeOf
-import com.kotlinconf.workshop.househelper.data.HouseService
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
 
 @Composable
 @Preview
@@ -106,9 +110,18 @@ fun App() {
                             typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
                         ) {
                             val deviceId = it.toRoute<LightDetails>().deviceId
+
+                            val newName = navController.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.getStateFlow<String?>("newName", null)
+                                ?.collectAsState()
+                                ?.value
+
                             LightDetailsScreen(
                                 deviceId = deviceId,
-                                onNavigateUp = { navController.navigateUp() }
+                                newName = newName,
+                                onNavigateUp = { navController.navigateUp() },
+                                onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) }
                             )
                         }
                         composable<CameraDetails>(
@@ -117,7 +130,16 @@ fun App() {
                             val deviceId = it.toRoute<CameraDetails>().deviceId
                             CameraDetailsScreen(
                                 deviceId = deviceId,
-                                onNavigateUp = { navController.navigateUp() }
+                                onNavigateUp = { navController.navigateUp() },
+                            )
+                        }
+                        dialog<RenameDevice> {
+                            RenameLightDialog(
+                                currentName = it.toRoute<RenameDevice>().currentName,
+                                onDismiss = {
+                                    navController.previousBackStackEntry?.savedStateHandle?.set("newName", it)
+                                    navController.navigateUp()
+                                },
                             )
                         }
                     }

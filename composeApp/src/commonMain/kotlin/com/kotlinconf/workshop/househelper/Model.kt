@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper
 
+import androidx.compose.ui.graphics.Color
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.camera
 import househelper.composeapp.generated.resources.humidity
@@ -50,7 +51,7 @@ data class LightDevice(
     override val isOn: Boolean = false,
     override val roomId: RoomId,
     val brightness: Int = 50,
-    val color: RGBColor = DeviceConstants.Light.DEFAULT_COLOR
+    val color: Color = DeviceConstants.Light.DEFAULT_COLOR
 ) : Device, Toggleable {
     init {
         require(brightness in DeviceConstants.Light.MIN_BRIGHTNESS..DeviceConstants.Light.MAX_BRIGHTNESS) { 

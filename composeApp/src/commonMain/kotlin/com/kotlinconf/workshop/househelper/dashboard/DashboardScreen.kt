@@ -201,14 +201,7 @@ private fun DeviceCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(height)
-                    .background(
-                        Color(
-                            red = device.color.red,
-                            green = device.color.green,
-                            blue = device.color.blue,
-                            alpha = (255 * 0.7f).toInt()
-                        )
-                    )
+                    .background(device.color.copy(alpha = 0.7f))
                     .align(Alignment.BottomCenter)
             )
         } else {
