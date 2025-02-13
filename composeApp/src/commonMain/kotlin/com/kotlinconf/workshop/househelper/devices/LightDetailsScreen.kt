@@ -3,7 +3,6 @@ package com.kotlinconf.workshop.househelper.devices
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -32,6 +31,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.animation.core.animateFloatAsState
@@ -39,7 +39,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
@@ -88,13 +88,17 @@ fun LightDetailsScreen(
         ) {
             device?.let { light ->
                 var localBrightness by remember { mutableIntStateOf(light.brightness) }
+                var isDragging by remember { mutableStateOf(false) }
 
                 LaunchedEffect(localBrightness) {
+                    if (!isDragging) {
+                        delay(50)
+                    }
                     viewModel.updateBrightness(localBrightness)
                 }
 
                 Text(
-                    text = "Brightness: ${localBrightness.toInt()}%",
+                    text = "${localBrightness.toInt()}%",
                     style = MaterialTheme.typography.bodyLarge
                 )
 
@@ -103,19 +107,37 @@ fun LightDetailsScreen(
                         .width(160.dp)
                         .height(400.dp)
                         .clip(RoundedCornerShape(24.dp))
+                        .border(
+                            width = 1.dp,
+                            color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
+                            shape = RoundedCornerShape(24.dp)
+                        )
                         .background(MaterialTheme.colorScheme.surface)
                         .pointerInput(Unit) {
                             awaitPointerEventScope {
                                 while (true) {
                                     val event = awaitPointerEvent()
-                                    val position = event.changes.first().position
+                                    val firstChange = event.changes.first()
+                                    val position = firstChange.position
                                     when (event.type) {
-                                        androidx.compose.ui.input.pointer.PointerEventType.Press,
-                                        androidx.compose.ui.input.pointer.PointerEventType.Move -> {
-                                            if (event.changes.first().pressed) {
+                                        PointerEventType.Press -> {
+                                            if (firstChange.pressed) {
                                                 val newBrightness = ((1f - position.y / size.height) * DeviceConstants.Light.MAX_BRIGHTNESS).toInt()
                                                 localBrightness = newBrightness.coerceIn(DeviceConstants.Light.MIN_BRIGHTNESS, DeviceConstants.Light.MAX_BRIGHTNESS)
                                             }
+                                        }
+                                        PointerEventType.Move -> {
+                                            if (firstChange.pressed) {
+                                                // Only set dragging if there's actual movement
+                                                if (firstChange.position != firstChange.previousPosition) {
+                                                    isDragging = true
+                                                }
+                                                val newBrightness = ((1f - position.y / size.height) * DeviceConstants.Light.MAX_BRIGHTNESS).toInt()
+                                                localBrightness = newBrightness.coerceIn(DeviceConstants.Light.MIN_BRIGHTNESS, DeviceConstants.Light.MAX_BRIGHTNESS)
+                                            }
+                                        }
+                                        PointerEventType.Release -> {
+                                            isDragging = false
                                         }
                                         else -> Unit
                                     }
@@ -123,27 +145,12 @@ fun LightDetailsScreen(
                             }
                         }
                 ) {
-                    // Min indicator
-                    Text(
-                        text = "100%",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier
-                            .align(Alignment.TopCenter)
-                            .padding(top = 4.dp)
-                    )
-
-                    // Max indicator
-                    Text(
-                        text = "0%",
-                        style = MaterialTheme.typography.labelSmall,
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .padding(bottom = 4.dp)
-                    )
 
                     val animatedHeight by animateFloatAsState(
                         targetValue = localBrightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS,
-                        animationSpec = tween(durationMillis = 200),
+                        animationSpec = tween(
+                            durationMillis = if (isDragging) 0 else 200
+                        ),
                         label = "brightness height"
                     )
                     val animatedAlpha by animateFloatAsState(

@@ -182,7 +182,7 @@ private fun DeviceCard(
             .height(140.dp)
             .background(MaterialTheme.colorScheme.surface)
             .border(
-                width = 2.dp,
+                width = 1.dp,
                 color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
                 shape = cardShape
             )
