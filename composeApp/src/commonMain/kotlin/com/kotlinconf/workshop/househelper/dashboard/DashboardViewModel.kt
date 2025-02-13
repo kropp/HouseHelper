@@ -27,15 +27,7 @@ class DashboardViewModel(
         )
 
     fun onDeviceClicked(device: Device) {
-        val updatedDevice = when {
-            device is Toggleable -> when (device) {
-                is LightDevice -> device.copy(isOn = !device.isOn)
-                is SwitchDevice -> device.copy(isOn = !device.isOn)
-                is CameraDevice -> device.copy(isOn = !device.isOn)
-            }
-            else -> device
-        }
-        houseService.updateDevice(updatedDevice)
+        houseService.toggle(device)
     }
 
     fun onDeviceLongPressed(device: Device) {

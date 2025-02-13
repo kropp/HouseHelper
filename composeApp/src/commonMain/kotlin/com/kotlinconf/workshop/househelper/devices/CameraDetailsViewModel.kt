@@ -23,7 +23,7 @@ class CameraDetailsViewModel(
 
     fun toggleCamera(deviceId: DeviceId) {
         getCamera(deviceId).value?.let { camera ->
-            houseService.updateDevice(camera.copy(isOn = !camera.isOn))
+            houseService.toggleCamera(camera)
         }
     }
 }

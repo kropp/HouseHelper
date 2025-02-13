@@ -25,25 +25,25 @@ class LightDetailsViewModel(
 
     fun toggleLight() {
         light.value?.let { light ->
-            houseService.updateDevice(light.copy(isOn = !light.isOn))
+            houseService.toggle(light)
         }
     }
 
     fun updateBrightness(brightness: Int) {
         light.value?.let { light ->
-            houseService.updateDevice(light.copy(brightness = brightness))
+            houseService.setBrightness(light, brightness)
         }
     }
 
     fun updateColor(color: Color) {
         light.value?.let { light ->
-            houseService.updateDevice(light.copy(color = color))
+            houseService.setColor(light, color)
         }
     }
 
     fun renameLightDevice(newName: String) {
         light.value?.let { light ->
-            houseService.updateDevice(light.copy(name = newName))
+            houseService.rename(light, newName)
         }
     }
 }
