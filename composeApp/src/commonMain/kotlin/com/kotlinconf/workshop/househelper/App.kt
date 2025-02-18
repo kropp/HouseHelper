@@ -59,10 +59,11 @@ fun App() {
         DevelopmentEntryPoint {
             MaterialTheme(
                 colorScheme = if (isSystemInDarkTheme()) {
-                    darkColorScheme()
+                    AppDarkColorScheme
                 } else {
-                    lightColorScheme()
-                }
+                    AppLightColorScheme
+                },
+                shapes = AppShapes,
             ) {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
