@@ -1,13 +1,15 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
-import androidx.compose.ui.graphics.Color
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.test.*
 import com.kotlinconf.workshop.househelper.*
-import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlin.test.Test
+import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
 
 class DashboardScreenTest {
     private val testRoomId = RoomId("living-room")
@@ -33,60 +35,20 @@ class DashboardScreenTest {
         name = "Living Room"
     )
 
-    private class TestHouseService : HouseService {
-        private val roomsFlow = MutableStateFlow(listOf<Room>())
-        private val devicesFlow = MutableStateFlow(listOf<Device>())
-        private val deviceStates = mutableMapOf<DeviceId, Boolean>()
-
-        fun setRooms(rooms: List<Room>) {
-            roomsFlow.value = rooms
-        }
-
-        fun setDevices(devices: List<Device>) {
-            devicesFlow.value = devices
-            devices.filterIsInstance<Toggleable>().forEach { device ->
-                if (device is Device) {
-                    deviceStates[device.deviceId] = device.isOn
-                }
-            }
-        }
-
-        override fun getRooms(): Flow<List<Room>> = roomsFlow
-        override fun getDevicesForRoom(roomId: RoomId): Flow<List<Device>> = devicesFlow
-        override fun getDevice(deviceId: DeviceId): Flow<Device?> = MutableStateFlow(null)
-        override fun toggle(device: Device): Boolean {
-            val currentState = deviceStates[device.deviceId] ?: return false
-            deviceStates[device.deviceId] = !currentState
-
-            // Update the devices flow with the new state
-            devicesFlow.value = devicesFlow.value.map { d ->
-                if (d.deviceId == device.deviceId && d is Toggleable) {
-                    when (d) {
-                        is LightDevice -> d.copy(isOn = !currentState)
-                        is CameraDevice -> d.copy(isOn = !currentState)
-                        else -> d
-                    }
-                } else d
-            }
-            return true
-        }
-        override fun setBrightness(device: LightDevice, brightness: Int) {}
-        override fun setColor(device: LightDevice, color: Color) {}
-        override fun rename(device: Device, name: String) {}
-    }
-
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testDashboardInitialState() = runComposeUiTest {
-        val houseService = TestHouseService()
-        houseService.setRooms(listOf(testRoom))
-        houseService.setDevices(listOf(testLight, testCamera))
-
         setContent {
+            val rooms = listOf(testRoom)
+            val devices = listOf(testLight, testCamera)
+            val devicesByRoom = mapOf<RoomId, List<Device>>(testRoomId to devices)
+
             DashboardScreen(
+                rooms = rooms,
+                devicesByRoom = devicesByRoom,
+                onDeviceClicked = {},
                 onNavigateToLightDetails = {},
                 onNavigateToCameraDetails = {},
-                viewModel = DashboardViewModel(houseService)
             )
         }
 
@@ -104,25 +66,38 @@ class DashboardScreenTest {
     @OptIn(ExperimentalTestApi::class)
     @Test
     fun testDeviceToggle() = runComposeUiTest {
-        val houseService = TestHouseService()
-        houseService.setRooms(listOf(testRoom))
-        houseService.setDevices(listOf(testLight, testCamera))
+        var currentLight by mutableStateOf(testLight)
+        var currentCamera by mutableStateOf(testCamera)
 
         setContent {
+            val rooms = listOf(testRoom)
+            val devices = listOf(currentLight, currentCamera)
+            val devicesByRoom = mapOf<RoomId, List<Device>>(testRoomId to devices)
+
             DashboardScreen(
+                rooms = rooms,
+                devicesByRoom = devicesByRoom,
+                onDeviceClicked = { device ->
+                    when (device) {
+                        is LightDevice -> currentLight = device.copy(isOn = !device.isOn)
+                        is CameraDevice -> currentCamera = device.copy(isOn = !device.isOn)
+                        is HumidityDevice -> {}
+                        is SwitchDevice -> {}
+                        is ThermostatDevice -> {}
+                    }
+                },
                 onNavigateToLightDetails = {},
                 onNavigateToCameraDetails = {},
-                viewModel = DashboardViewModel(houseService)
             )
         }
 
         // Test light device toggle
         onNode(hasTestTag("device_card_${testLightId.value}")).performClick()
-        onNode(hasContentDescription("Device Main Light is ON")).assertExists()
+        assertTrue(currentLight.isOn)
 
         // Toggle it back
         onNode(hasTestTag("device_card_${testLightId.value}")).performClick()
-        onNode(hasContentDescription("Device Main Light is OFF")).assertExists()
+        assertFalse(currentLight.isOn)
     }
 
     @OptIn(ExperimentalTestApi::class)
@@ -131,26 +106,27 @@ class DashboardScreenTest {
         var lightDetailsNavigated = false
         var cameraDetailsNavigated = false
 
-        val houseService = TestHouseService()
-        houseService.setRooms(listOf(testRoom))
-        houseService.setDevices(listOf(testLight, testCamera))
-
         setContent {
+            val rooms = listOf(testRoom)
+            val devices = listOf(testLight, testCamera)
+            val devicesByRoom = mapOf<RoomId, List<Device>>(testRoomId to devices)
+
             DashboardScreen(
+                rooms = rooms,
+                devicesByRoom = devicesByRoom,
+                onDeviceClicked = {},
                 onNavigateToLightDetails = { lightDetailsNavigated = true },
                 onNavigateToCameraDetails = { cameraDetailsNavigated = true },
-                viewModel = DashboardViewModel(houseService)
             )
         }
 
-        // Test navigation by clicking "View more"
-        onNode(hasTestTag("device_card_${testLightId.value}")).performTouchInput { 
-            longClick()
+        onNode(hasTestTag("device_card_view_more_${testLightId.value}")).performTouchInput {
+            click()
         }
         assertTrue(lightDetailsNavigated, "Navigation to light details was not triggered")
 
-        onNode(hasTestTag("device_card_${testCameraId.value}")).performTouchInput { 
-            longClick()
+        onNode(hasTestTag("device_card_view_more_${testCameraId.value}")).performTouchInput {
+            click()
         }
         assertTrue(cameraDetailsNavigated, "Navigation to camera details was not triggered")
     }

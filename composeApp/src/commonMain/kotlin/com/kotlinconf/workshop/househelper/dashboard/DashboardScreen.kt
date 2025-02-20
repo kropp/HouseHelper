@@ -2,46 +2,41 @@ package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
-import androidx.compose.animation.core.animateFloatAsState
-import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Icon
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentSize
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -52,27 +47,23 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.border
-import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.unit.dp
+import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
+import com.kotlinconf.workshop.househelper.HumidityDevice
+import com.kotlinconf.workshop.househelper.LightDevice
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.RoomId
-import com.kotlinconf.workshop.househelper.Toggleable
-import com.kotlinconf.workshop.househelper.LightDevice
-import com.kotlinconf.workshop.househelper.CameraDevice
-import com.kotlinconf.workshop.househelper.HumidityDevice
 import com.kotlinconf.workshop.househelper.ThermostatDevice
-import com.kotlinconf.workshop.househelper.Sensor
-import kotlin.math.roundToInt
+import com.kotlinconf.workshop.househelper.Toggleable
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
-
+import kotlin.math.roundToInt
 
 @Composable
 fun DashboardScreen(
@@ -81,23 +72,44 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val rooms by viewModel.rooms.collectAsState()
+    val devicesByRoom = rooms.associate { room ->
+        val devices by viewModel.getDevicesForRoom(room.id).collectAsState()
+        room.id to devices
+    }
+
+    DashboardScreen(
+        rooms = rooms,
+        devicesByRoom = devicesByRoom,
+        onDeviceClicked = viewModel::onDeviceClicked,
+        onNavigateToLightDetails = onNavigateToLightDetails,
+        onNavigateToCameraDetails = onNavigateToCameraDetails,
+    )
+}
+
+@Composable
+fun DashboardScreen(
+    rooms: List<Room>,
+    devicesByRoom: Map<RoomId, List<Device>>,
+    onDeviceClicked: (Device) -> Unit,
+    onNavigateToLightDetails: (DeviceId) -> Unit,
+    onNavigateToCameraDetails: (DeviceId) -> Unit,
+) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = PaddingValues(16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         items(rooms) { room ->
-            val devices by viewModel.getDevicesForRoom(room.id).collectAsState()
+            val devices = devicesByRoom[room.id] ?: emptyList()
             RoomSection(
                 room = room,
                 devices = devices,
-                onClick = { viewModel.onDeviceClicked(it) },
+                onClick = onDeviceClicked,
                 onLongClick = { device ->
                     when (device) {
                         is LightDevice -> onNavigateToLightDetails(device.deviceId)
                         is CameraDevice -> onNavigateToCameraDetails(device.deviceId)
-                        else -> { /* Other device types are not navigable */
-                        }
+                        else -> { /* Other device types are not navigable */ }
                     }
                 },
             )
@@ -263,7 +275,8 @@ private fun DeviceCard(
                                 indication = null,
                                 onClick = onLongClick
                             )
-                            .padding(vertical = 12.dp),
+                            .padding(vertical = 12.dp)
+                            .semantics { testTag = "device_card_view_more_${device.deviceId.value}" },
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
