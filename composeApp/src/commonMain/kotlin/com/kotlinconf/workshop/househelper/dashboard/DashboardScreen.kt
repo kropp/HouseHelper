@@ -56,6 +56,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.border
 import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.testTag
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
@@ -120,7 +122,8 @@ private fun RoomSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .padding(vertical = 8.dp),
+                .padding(vertical = 8.dp)
+                .semantics { testTag = "room_section_${room.id.value}" },
             verticalAlignment = Alignment.CenterVertically
         ) {
             val rotation by animateFloatAsState(if (expanded) 0f else -90f)
@@ -191,6 +194,7 @@ private fun DeviceCard(
                 indication = null,
                 onClick = onClick,
             )
+            .semantics { testTag = "device_card_${device.deviceId.value}" }
     ) {
         if (device is LightDevice) {
             val height by animateDpAsState(
@@ -230,7 +234,10 @@ private fun DeviceCard(
             ) {
                 Image(
                     painter = painterResource(device.iconResource),
-                    contentDescription = device.name,
+                    contentDescription = if (device is Toggleable) {
+                        if (device.isOn) "Device ${device.name} is ON"
+                        else "Device ${device.name} is OFF"
+                    } else device.name,
                     modifier = Modifier.size(40.dp),
                     colorFilter = ColorFilter.tint(contentColor),
                     alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
