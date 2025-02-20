@@ -43,8 +43,8 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun Onboarding(
-    text: StringResource,
-    subtitle: StringResource,
+    text: String,
+    subtitle: String,
     icon: androidx.compose.ui.graphics.vector.ImageVector,
     onNext: () -> Unit,
 ) {
@@ -84,7 +84,7 @@ fun Onboarding(
                     Spacer(modifier = Modifier.height(24.dp))
 
                     Text(
-                        text = stringResource(text),
+                        text = text,
                         style = MaterialTheme.typography.headlineMedium,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurface
@@ -93,7 +93,7 @@ fun Onboarding(
                     Spacer(modifier = Modifier.height(8.dp))
 
                     Text(
-                        text = stringResource(subtitle),
+                        text = subtitle,
                         style = MaterialTheme.typography.bodyLarge,
                         textAlign = TextAlign.Center,
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
