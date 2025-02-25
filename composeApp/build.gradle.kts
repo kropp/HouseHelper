@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSetTree
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackConfig
+import java.util.Locale
 
 plugins {
     alias(libs.plugins.kotlinMultiplatform)
@@ -12,6 +13,19 @@ plugins {
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
+}
+
+val javaFxClassifier = run {
+    val osName = System.getProperty("os.name").lowercase(Locale.getDefault())
+    val osArch = System.getProperty("os.arch").lowercase(Locale.getDefault())
+    when {
+        osName.contains("linux") && osArch.contains("aarch64") -> "linux-aarch64"
+        osName.contains("linux") -> "linux"
+        osName.contains("windows") -> "win"
+        osName.contains("mac") && osArch.contains("aarch64") -> "mac-aarch64"
+        osName.contains("mac") -> "mac"
+        else -> throw IllegalStateException("Unsupported OS: $osName")
+    }
 }
 
 kotlin {
@@ -85,6 +99,11 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
+
+            // JavaFx for video player
+            libs.bundles.javafx.get().forEach {
+                implementation(it) { artifact { classifier = javaFxClassifier } }
+            }
         }
     }
 }

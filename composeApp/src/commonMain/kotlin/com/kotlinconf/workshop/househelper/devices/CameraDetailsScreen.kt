@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.kotlinconf.workshop.househelper.DeviceId
+import com.kotlinconf.workshop.househelper.VideoPlayer
+import com.kotlinconf.workshop.househelper.rememberVideoPlayerState
 import org.koin.compose.viewmodel.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -56,10 +58,15 @@ fun CameraDetailsScreen(
                 onCheckedChange = { viewModel.toggleCamera(camera.deviceId) }
             )
 
-            // Additional camera-specific UI elements can be added here
             Text(
                 text = if (camera.isOn) "Camera is streaming" else "Camera is off",
                 style = MaterialTheme.typography.bodyLarge
+            )
+
+            VideoPlayer(
+                url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                modifier = Modifier.fillMaxSize(),
+                videoPlayerState = rememberVideoPlayerState(),
             )
         }
     }
