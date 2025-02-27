@@ -11,6 +11,7 @@ import kotlin.test.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@OptIn(ExperimentalTestApi::class)
 class DashboardScreenTest {
     private val testRoomId = RoomId("living-room")
     private val testLightId = DeviceId("light-1")
@@ -35,7 +36,6 @@ class DashboardScreenTest {
         name = "Living Room"
     )
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testDashboardInitialState() = runComposeUiTest {
         setContent {
@@ -63,7 +63,6 @@ class DashboardScreenTest {
         onNode(hasContentDescription("Device Security Camera is ON")).assertExists()
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testDeviceToggle() = runComposeUiTest {
         var currentLight by mutableStateOf(testLight)
@@ -100,7 +99,6 @@ class DashboardScreenTest {
         assertFalse(currentLight.isOn)
     }
 
-    @OptIn(ExperimentalTestApi::class)
     @Test
     fun testDeviceNavigation() = runComposeUiTest {
         var lightDetailsNavigated = false
