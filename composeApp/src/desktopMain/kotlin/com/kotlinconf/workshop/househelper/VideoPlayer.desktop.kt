@@ -42,6 +42,20 @@ actual fun VideoPlayer(
                         isPreserveRatio = true
                     }
 
+                    videoPlayerState.controlledPlayer = object : ControllableVideoPlayer {
+                        override fun play() {
+                            Platform.runLater {
+                                mediaView.mediaPlayer?.play()
+                            }
+                        }
+
+                        override fun stop() {
+                            Platform.runLater {
+                                mediaView.mediaPlayer?.stop()
+                            }
+                        }
+                    }
+
                     Platform.runLater {
                         mediaView.mediaPlayer?.play()
                     }

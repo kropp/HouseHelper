@@ -14,6 +14,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -23,15 +24,16 @@ import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.VideoPlayer
 import com.kotlinconf.workshop.househelper.rememberVideoPlayerState
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CameraDetailsScreen(
     deviceId: DeviceId,
     onNavigateUp: () -> Unit,
-    viewModel: CameraDetailsViewModel = koinViewModel()
+    viewModel: CameraDetailsViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
-    val device by viewModel.getCamera(deviceId).collectAsState(null)
+    val device by viewModel.camera.collectAsState(null)
 
     Column(
         modifier = Modifier.fillMaxSize().padding(16.dp),
@@ -55,7 +57,7 @@ fun CameraDetailsScreen(
 
             Switch(
                 checked = camera.isOn,
-                onCheckedChange = { viewModel.toggleCamera(camera.deviceId) }
+                onCheckedChange = { viewModel.toggleCamera() }
             )
 
             Text(
@@ -63,12 +65,21 @@ fun CameraDetailsScreen(
                 style = MaterialTheme.typography.bodyLarge
             )
 
+            val videoPlayerState = rememberVideoPlayerState()
+
+            LaunchedEffect(camera.isOn) {
+                if (camera.isOn) {
+                    videoPlayerState.play()
+                } else {
+                    videoPlayerState.stop()
+                }
+            }
+
             VideoPlayer(
                 url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                 modifier = Modifier.fillMaxSize(),
-                videoPlayerState = rememberVideoPlayerState(),
+                videoPlayerState = videoPlayerState,
             )
         }
     }
 }
-
