@@ -1,7 +1,6 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -31,7 +30,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -48,6 +46,7 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.testTag
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
@@ -180,30 +179,20 @@ private fun DeviceCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val backgroundColor by animateColorAsState(
-        targetValue = when {
-            device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primaryContainer
-            else -> MaterialTheme.colorScheme.surfaceVariant
-        }
-    )
-
-    val cardSize = 140.dp
     Card(
-        modifier = modifier
-            .size(cardSize)
-            .semantics { testTag = "device_card_${device.deviceId.value}" },
+        modifier = modifier.size(140.dp),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (device is LightDevice) {
                 val height by animateFloatAsState(
-                    if (device.isOn) 0f
+                    if (!device.isOn) 0f
                     else (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
                 )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
                         .fillMaxHeight(height)
-                        .background(device.color.copy(alpha = 0.2f))
+                        .background(device.color.copy(alpha = 0.3f))
                         .align(Alignment.BottomCenter)
                 )
             }
@@ -232,6 +221,13 @@ private fun DeviceCardContent(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+        val contentColor = when {
+            device is LightDevice && device.isOn -> device.color
+            device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primary
+            device is Toggleable -> MaterialTheme.colorScheme.onSurface.copy(alpha = 0.3f)
+            else -> MaterialTheme.colorScheme.onSurface
+        }
+
         Column(
             Modifier.weight(1f).fillMaxWidth(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -241,12 +237,15 @@ private fun DeviceCardContent(
                 painter = painterResource(device.iconResource),
                 contentDescription = null,
                 modifier = Modifier.size(40.dp),
-                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+                colorFilter = ColorFilter.tint(contentColor),
             )
             Spacer(modifier = Modifier.height(6.dp))
             Text(
                 text = device.name,
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
+                color = contentColor,
+                modifier = Modifier.padding(horizontal =  6.dp),
+                textAlign = TextAlign.Center,
             )
         }
         if (bottomText != null) {
@@ -263,8 +262,8 @@ private fun DeviceCardContent(
             ) {
                 Text(
                     text = bottomText,
-                    style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    style = MaterialTheme.typography.labelMedium,
+                    color = contentColor,
                 )
             }
         }

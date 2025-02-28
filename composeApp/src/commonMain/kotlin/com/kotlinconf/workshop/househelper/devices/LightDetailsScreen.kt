@@ -113,11 +113,11 @@ fun LightDetailsScreen(
                     modifier = Modifier
                         .width(160.dp)
                         .height(400.dp)
-                        .clip(RoundedCornerShape(24.dp))
+                        .clip(MaterialTheme.shapes.large)
                         .border(
                             width = 1.dp,
                             color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                            shape = RoundedCornerShape(24.dp)
+                            shape = MaterialTheme.shapes.large
                         )
                         .background(MaterialTheme.colorScheme.surface)
                         .pointerInput(Unit) {
@@ -194,12 +194,12 @@ fun LightDetailsScreen(
                         Box(
                             modifier = Modifier
                                 .aspectRatio(1f)
-                                .clip(RoundedCornerShape(8.dp))
+                                .clip(MaterialTheme.shapes.medium)
                                 .background(color)
                                 .border(
                                     width = 2.dp,
                                     color = if (color == light.color) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                    shape = RoundedCornerShape(8.dp)
+                                    shape = MaterialTheme.shapes.medium
                                 )
                                 .clickable { viewModel.updateColor(color) }
                         )
@@ -217,7 +217,7 @@ fun LightDetailsScreen(
             ) {
                 Switch(
                     checked = light.isOn,
-                    onCheckedChange = { viewModel.toggleLight() }
+                    onCheckedChange = { viewModel.toggleLight() },
                 )
             }
         }

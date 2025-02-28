@@ -17,7 +17,7 @@ val demoDevices = listOf(
         roomId = RoomId("living_room"),
         isOn = true,
         brightness = 85,
-        color = DeviceConstants.Light.PREDEFINED_COLORS[2] // Orange
+        color = DeviceConstants.Light.PREDEFINED_COLORS[2]
     ),
     LightDevice(
         deviceId = DeviceId("living_room_floor_lamp"),
@@ -31,7 +31,7 @@ val demoDevices = listOf(
         roomId = RoomId("living_room"),
         isOn = true,
         brightness = 65,
-        color = DeviceConstants.Light.PREDEFINED_COLORS[7] // Pink
+        color = DeviceConstants.Light.PREDEFINED_COLORS[3]
     ),
     SwitchDevice(
         deviceId = DeviceId("living_room_tv_switch"),
@@ -74,7 +74,7 @@ val demoDevices = listOf(
         roomId = RoomId("kitchen"),
         isOn = true,
         brightness = 90,
-        color = DeviceConstants.Light.PREDEFINED_COLORS[5] // Blue
+        color = DeviceConstants.Light.PREDEFINED_COLORS[5]
     ),
     LightDevice(
         deviceId = DeviceId("kitchen_under_cabinet_light"),
