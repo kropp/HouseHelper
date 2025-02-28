@@ -1,9 +1,23 @@
 package com.kotlinconf.workshop.househelper.devices
 
+import androidx.compose.animation.animateColor
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.RepeatMode
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -19,6 +33,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.VideoPlayer
@@ -60,10 +77,32 @@ fun CameraDetailsScreen(
                 onCheckedChange = { viewModel.toggleCamera() }
             )
 
-            Text(
-                text = if (camera.isOn) "Camera is streaming" else "Camera is off",
-                style = MaterialTheme.typography.bodyLarge
-            )
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                if (camera.isOn) {
+                    val infiniteTransition = rememberInfiniteTransition()
+                    val alpha by infiniteTransition.animateFloat(
+                        initialValue = 0f, targetValue = 1f,
+                        animationSpec = infiniteRepeatable(
+                            animation = tween(1000, easing = LinearEasing),
+                            repeatMode = RepeatMode.Reverse
+                        ),
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .padding(horizontal = 8.dp)
+                            .clip(CircleShape)
+                            .alpha(alpha)
+                            .background(Color.Red)
+                            .size(12.dp)
+                    )
+                }
+
+                Text(
+                    text = if (camera.isOn) "Camera is streaming" else "Camera is off",
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            }
 
             val videoPlayerState = rememberVideoPlayerState()
 
@@ -77,7 +116,11 @@ fun CameraDetailsScreen(
 
             VideoPlayer(
                 url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .padding(horizontal = 16.dp)
+                    .clip(MaterialTheme.shapes.medium)
+                    .aspectRatio(16f / 9f)
+                    .fillMaxWidth(),
                 videoPlayerState = videoPlayerState,
             )
         }

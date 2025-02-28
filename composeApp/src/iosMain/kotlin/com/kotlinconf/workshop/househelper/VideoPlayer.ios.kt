@@ -2,13 +2,21 @@ package com.kotlinconf.workshop.househelper
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.viewinterop.UIKitView
 import kotlinx.cinterop.ExperimentalForeignApi
-import kotlinx.coroutines.delay
-import platform.AVFoundation.*
-import platform.CoreMedia.CMTimeGetSeconds
+import platform.AVFoundation.AVPlayer
+import platform.AVFoundation.AVPlayerLayer
+import platform.AVFoundation.cancelPendingPrerolls
+import platform.AVFoundation.pause
+import platform.AVFoundation.play
+import platform.AVFoundation.volume
 import platform.Foundation.NSURL
 import platform.UIKit.UIColor
 import platform.UIKit.UIView
@@ -38,7 +46,7 @@ actual fun VideoPlayer(
     }
     val player = remember(mediaPlayer) { mediaPlayer.toControllableVideoPlayer() }
     videoPlayerState.controlledPlayer = player
-    AvView(uiView, mediaPlayer, avPlayerLayer)
+    AvView(uiView, mediaPlayer, avPlayerLayer, modifier)
 }
 
 fun AVPlayer.toControllableVideoPlayer(): ControllableVideoPlayer {
@@ -59,9 +67,10 @@ fun AVPlayer.toControllableVideoPlayer(): ControllableVideoPlayer {
 private fun AvView(
     uiView: UIView,
     mediaPlayer: AVPlayer,
-    avPlayerLayer: AVPlayerLayer
+    avPlayerLayer: AVPlayerLayer,
+    modifier: Modifier = Modifier,
 ) {
-    Box(Modifier.fillMaxSize()) {
+    Box(modifier) {
         var inflated by remember { mutableStateOf(false) }
         LaunchedEffect(inflated) {
             if (inflated) {

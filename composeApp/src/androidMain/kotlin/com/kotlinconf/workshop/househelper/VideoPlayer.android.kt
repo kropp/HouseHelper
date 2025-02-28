@@ -14,7 +14,7 @@ actual fun VideoPlayer(
     videoPlayerState: VideoPlayerState,
 ) {
     AndroidView(
-        modifier = Modifier.fillMaxSize(),
+        modifier = modifier,
         factory = { context ->
             VideoView(context).apply {
                 val videoView = this
@@ -25,13 +25,11 @@ actual fun VideoPlayer(
                     }
 
                     override fun stop() {
-                        videoView.stopPlayback()
+                        videoView.pause()
                     }
                 }
             }
         },
-        update = { view ->
-            view.start()
-        },
+        update = { view -> },
     )
 }

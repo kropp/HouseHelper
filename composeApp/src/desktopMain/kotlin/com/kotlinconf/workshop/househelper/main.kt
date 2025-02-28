@@ -6,6 +6,7 @@ import androidx.compose.ui.window.application
 import androidx.compose.ui.window.rememberWindowState
 
 fun main() = application {
+    System.setProperty("compose.interop.blending", "true")
     Window(
         onCloseRequest = ::exitApplication,
         title = "HouseHelper",
