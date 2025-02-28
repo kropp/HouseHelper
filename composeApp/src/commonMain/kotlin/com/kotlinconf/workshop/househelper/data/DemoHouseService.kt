@@ -101,7 +101,12 @@ class DemoHouseService : HouseService {
     }
 
     override fun setBrightness(light: LightDevice, brightness: Int) {
-        updateDevice(light.copy(brightness = brightness))
+        updateDevice(
+            light.copy(
+                brightness = brightness,
+                isOn = brightness != 0,
+            )
+        )
     }
 
     override fun setColor(light: LightDevice, color: Color) {

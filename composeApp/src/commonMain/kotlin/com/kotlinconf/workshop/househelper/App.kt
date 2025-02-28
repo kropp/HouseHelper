@@ -61,7 +61,11 @@ fun App() {
     KoinMultiplatformApplication(koinConfiguration()) {
         DevelopmentEntryPoint {
             MaterialTheme(
-                colorScheme = AppDarkColorScheme,
+                colorScheme = if (isSystemInDarkTheme()) {
+                    AppDarkColorScheme
+                } else {
+                    AppLightColorScheme
+                },
                 shapes = AppShapes,
             ) {
                 Surface(

@@ -14,6 +14,7 @@ object DeviceConstants {
             Color(140, 100, 185),  // Pastel Lavender
             Color(65, 136, 165),  // Pastel Blue
             Color(74, 168, 74),  // Mint Green
+            Color(34, 139, 34),  // Forest Green
             Color(170, 58, 58),  // Light Coral
         )
 
