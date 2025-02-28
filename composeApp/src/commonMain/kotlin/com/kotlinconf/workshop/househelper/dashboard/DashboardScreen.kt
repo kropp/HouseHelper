@@ -106,7 +106,8 @@ fun DashboardScreen(
                     when (device) {
                         is LightDevice -> onNavigateToLightDetails(device.deviceId)
                         is CameraDevice -> onNavigateToCameraDetails(device.deviceId)
-                        else -> { /* Other device types are not navigable */
+                        else -> {
+                            /* Other device types are not navigable */
                         }
                     }
                 },
@@ -132,8 +133,7 @@ private fun RoomSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { expanded = !expanded }
-                .padding(vertical = 8.dp)
-                .semantics { testTag = "room_section_${room.id.value}" },
+                .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val rotation by animateFloatAsState(if (expanded) 0f else -90f)
@@ -235,7 +235,11 @@ private fun DeviceCardContent(
         ) {
             Image(
                 painter = painterResource(device.iconResource),
-                contentDescription = null,
+                contentDescription = if (device is Toggleable) {
+                    "Device ${device.name} is ${if (device.isOn) "ON" else "OFF"}"
+                } else {
+                    device.name
+                },
                 modifier = Modifier.size(40.dp),
                 colorFilter = ColorFilter.tint(contentColor),
             )

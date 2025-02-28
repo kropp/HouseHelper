@@ -18,6 +18,7 @@ class OnboardingTest {
             Onboarding(
                 text = "Welcome to Test",
                 subtitle = "This is a test subtitle",
+                buttonText = "Next",
                 icon = Icons.Default.Home,
                 onNext = { nextClicked = true }
             )

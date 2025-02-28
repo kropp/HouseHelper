@@ -43,6 +43,7 @@ import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_about_subtitle
 import househelper.composeapp.generated.resources.onboarding_done
 import househelper.composeapp.generated.resources.onboarding_done_subtitle
+import househelper.composeapp.generated.resources.onboarding_next_button
 import househelper.composeapp.generated.resources.onboarding_welcome
 import househelper.composeapp.generated.resources.onboarding_welcome_subtitle
 import org.jetbrains.compose.resources.stringResource
@@ -74,6 +75,7 @@ fun App() {
                                 Onboarding(
                                     text = stringResource(Res.string.onboarding_welcome),
                                     subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
+                                    buttonText = stringResource(Res.string.onboarding_next_button),
                                     icon = Icons.Default.Favorite,
                                     onNext = { navController.navigate(Onboarding) }
                                 )
@@ -82,6 +84,7 @@ fun App() {
                                 Onboarding(
                                     text = stringResource(Res.string.onboarding_about),
                                     subtitle = stringResource(Res.string.onboarding_about_subtitle),
+                                    buttonText = stringResource(Res.string.onboarding_next_button),
                                     icon = Icons.Default.Info,
                                     onNext = { navController.navigate(OnboardingDone) }
                                 )
@@ -90,6 +93,7 @@ fun App() {
                                 Onboarding(
                                     text = stringResource(Res.string.onboarding_done),
                                     subtitle = stringResource(Res.string.onboarding_done_subtitle),
+                                    buttonText = stringResource(Res.string.onboarding_next_button),
                                     icon = Icons.Default.Home,
                                     onNext = { navController.navigate(Dashboard) }
                                 )

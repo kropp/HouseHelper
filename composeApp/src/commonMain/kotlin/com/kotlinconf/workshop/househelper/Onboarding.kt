@@ -32,6 +32,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import househelper.composeapp.generated.resources.Res
@@ -45,7 +46,8 @@ import org.jetbrains.compose.resources.stringResource
 fun Onboarding(
     text: String,
     subtitle: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    buttonText: String,
+    icon: ImageVector,
     onNext: () -> Unit,
 ) {
     var visible by remember { mutableStateOf(false) }
@@ -124,7 +126,7 @@ fun Onboarding(
                 shape = MaterialTheme.shapes.medium
             ) {
                 Text(
-                    text = stringResource(Res.string.onboarding_next_button),
+                    text = buttonText,
                     style = MaterialTheme.typography.titleMedium,
                     modifier = Modifier.padding(vertical = 8.dp)
                 )

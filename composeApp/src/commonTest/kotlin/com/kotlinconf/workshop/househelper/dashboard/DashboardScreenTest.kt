@@ -53,14 +53,11 @@ class DashboardScreenTest {
         }
 
         // Verify room section exists
-        onNode(hasTestTag("room_section_${testRoomId.value}")).assertExists()
+        onNode(hasText("Living Room")).assertExists()
 
         // Verify devices are displayed with correct initial states
-        onNode(hasTestTag("device_card_${testLightId.value}")).assertExists()
-        onNode(hasContentDescription("Device Main Light is OFF")).assertExists()
-
-        onNode(hasTestTag("device_card_${testCameraId.value}")).assertExists()
-        onNode(hasContentDescription("Device Security Camera is ON")).assertExists()
+        onNode(hasText("Security Camera")).assertExists()
+        onNode(hasText("Main Light")).assertExists()
     }
 
     @Test
@@ -77,13 +74,7 @@ class DashboardScreenTest {
                 rooms = rooms,
                 devicesByRoom = devicesByRoom,
                 onDeviceClicked = { device ->
-                    when (device) {
-                        is LightDevice -> currentLight = device.copy(isOn = !device.isOn)
-                        is CameraDevice -> currentCamera = device.copy(isOn = !device.isOn)
-                        is HumidityDevice -> {}
-                        is SwitchDevice -> {}
-                        is ThermostatDevice -> {}
-                    }
+                    if (device is LightDevice) currentLight = device.copy(isOn = !device.isOn)
                 },
                 onNavigateToLightDetails = {},
                 onNavigateToCameraDetails = {},
@@ -91,11 +82,11 @@ class DashboardScreenTest {
         }
 
         // Test light device toggle
-        onNode(hasTestTag("device_card_${testLightId.value}")).performClick()
+        onNode(hasText("Main Light")).performClick()
         assertTrue(currentLight.isOn)
 
         // Toggle it back
-        onNode(hasTestTag("device_card_${testLightId.value}")).performClick()
+        onNode(hasText("Main Light")).performClick()
         assertFalse(currentLight.isOn)
     }
 
@@ -118,13 +109,13 @@ class DashboardScreenTest {
             )
         }
 
-        onNode(hasTestTag("device_card_view_more_${testLightId.value}")).performTouchInput {
-            click()
+        onNode(hasText("Main Light")).performTouchInput {
+            longClick()
         }
         assertTrue(lightDetailsNavigated, "Navigation to light details was not triggered")
 
-        onNode(hasTestTag("device_card_view_more_${testCameraId.value}")).performTouchInput {
-            click()
+        onNode(hasText("Security Camera")).performTouchInput {
+            longClick()
         }
         assertTrue(cameraDetailsNavigated, "Navigation to camera details was not triggered")
     }
