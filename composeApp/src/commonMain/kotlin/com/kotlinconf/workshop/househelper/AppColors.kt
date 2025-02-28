@@ -15,16 +15,16 @@ private val LightBlue40 = Color(0xFF0288D1)  // Medium blue
 
 // Light theme colors
 val AppLightColorScheme = lightColorScheme(
-    primary = Blue40,
-    secondary = BlueGrey40,
-    tertiary = LightBlue40,
-    background = Color(0xFFFFFFFF),
-    surface = Color(0xFFFFFFFF),
-    onPrimary = Color(0xFFFFFFFF),
-    onSecondary = Color(0xFFFFFFFF),
-    onTertiary = Color(0xFFFFFFFF),
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
+//    primary = Blue40,
+//    secondary = BlueGrey40,
+//    tertiary = LightBlue40,
+//    background = Color(0xFFFFFFFF),
+//    surface = Color(0xFFFFFFFF),
+//    onPrimary = Color(0xFF000000),
+//    onSecondary = Color(0xFF000000),
+//    onTertiary = Color(0xFF000000),
+//    onBackground = Color(0xFF1C1B1F),
+//    onSurface = Color(0xFF1C1B1F),
 )
 
 // Dark theme colors

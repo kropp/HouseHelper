@@ -36,7 +36,7 @@ fun CameraDetailsScreen(
     val device by viewModel.camera.collectAsState(null)
 
     Column(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {

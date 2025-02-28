@@ -2,7 +2,6 @@ package com.kotlinconf.workshop.househelper.dashboard
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.animateColorAsState
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.expandVertically
 import androidx.compose.animation.fadeIn
@@ -10,9 +9,8 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,19 +19,20 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material3.Divider
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,7 +44,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.semantics
@@ -109,7 +107,8 @@ fun DashboardScreen(
                     when (device) {
                         is LightDevice -> onNavigateToLightDetails(device.deviceId)
                         is CameraDevice -> onNavigateToCameraDetails(device.deviceId)
-                        else -> { /* Other device types are not navigable */ }
+                        else -> { /* Other device types are not navigable */
+                        }
                     }
                 },
             )
@@ -181,153 +180,94 @@ private fun DeviceCard(
     onLongClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    val cardShape = RoundedCornerShape(12.dp)
     val backgroundColor by animateColorAsState(
         targetValue = when {
             device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primaryContainer
-            device is Toggleable -> MaterialTheme.colorScheme.surface.copy(alpha = 0.7f)
             else -> MaterialTheme.colorScheme.surfaceVariant
         }
     )
 
-    Box(
+    val cardSize = 140.dp
+    Card(
         modifier = modifier
-            .clip(cardShape)
-            .widthIn(max = 140.dp)
-            .height(140.dp)
-            .background(MaterialTheme.colorScheme.surface)
-            .border(
-                width = 1.dp,
-                color = MaterialTheme.colorScheme.outline.copy(alpha = 0.2f),
-                shape = cardShape
-            )
-            .clickable(
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-                onClick = onClick,
-            )
-            .semantics { testTag = "device_card_${device.deviceId.value}" }
+            .size(cardSize)
+            .semantics { testTag = "device_card_${device.deviceId.value}" },
     ) {
-        if (device is LightDevice) {
-            val height by animateDpAsState(
-                if (device.isOn) 0.dp
-                else 140.dp * (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
+        Box(modifier = Modifier.fillMaxSize()) {
+            if (device is LightDevice) {
+                val height by animateFloatAsState(
+                    if (device.isOn) 0f
+                    else (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(height)
+                        .background(device.color.copy(alpha = 0.2f))
+                        .align(Alignment.BottomCenter)
+                )
+            }
+
+            DeviceCardContent(
+                device = device,
+                modifier = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick),
+                bottomText = when (device) {
+                    is ThermostatDevice -> "${device.currentValue.roundToInt()}°C"
+                    is HumidityDevice -> "${device.currentValue.roundToInt()}%"
+                    else -> null
+                }
+            )
+        }
+    }
+}
+
+@Composable
+private fun DeviceCardContent(
+    device: Device,
+    modifier: Modifier = Modifier,
+    bottomText: String? = null,
+) {
+    Column(
+        modifier = modifier.fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Column(
+            Modifier.weight(1f).fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center
+        ) {
+            Image(
+                painter = painterResource(device.iconResource),
+                contentDescription = null,
+                modifier = Modifier.size(40.dp),
+                colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.onSurface),
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = device.name,
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        if (bottomText != null) {
+            HorizontalDivider(
+                Modifier.fillMaxWidth(),
+                1.dp,
+                MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
             )
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(height)
-                    .background(device.color.copy(alpha = 0.7f))
-                    .align(Alignment.BottomCenter)
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(backgroundColor)
-            )
-        }
-        val contentColor by animateColorAsState(
-            targetValue = when {
-                device is Toggleable && device.isOn -> MaterialTheme.colorScheme.primary
-                device is Toggleable -> MaterialTheme.colorScheme.onSurface
-                else -> MaterialTheme.colorScheme.onSurfaceVariant
-            }
-        )
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceBetween
-        ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center
+                    .padding(vertical = 12.dp),
+                contentAlignment = Alignment.Center
             ) {
-                Image(
-                    painter = painterResource(device.iconResource),
-                    contentDescription = if (device is Toggleable) {
-                        if (device.isOn) "Device ${device.name} is ON"
-                        else "Device ${device.name} is OFF"
-                    } else device.name,
-                    modifier = Modifier.size(40.dp),
-                    colorFilter = ColorFilter.tint(contentColor),
-                    alpha = if (device is Toggleable && !device.isOn) 0.6f else 1.0f
-                )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
-                    text = device.name,
-                    style = MaterialTheme.typography.bodySmall,
-                    color = contentColor
+                    text = bottomText,
+                    style = MaterialTheme.typography.labelSmall,
+                    color = MaterialTheme.colorScheme.primary
                 )
-            }
-            when (device) {
-                is LightDevice, is CameraDevice -> {
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                indication = null,
-                                onClick = onLongClick
-                            )
-                            .padding(vertical = 12.dp)
-                            .semantics { testTag = "device_card_view_more_${device.deviceId.value}" },
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "View more",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.7f)
-                        )
-                    }
-                }
-
-                is ThermostatDevice -> {
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "${device.currentValue.roundToInt()}°C",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-                is HumidityDevice -> {
-                    Divider(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.1f)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 12.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text = "${device.currentValue.roundToInt()}%",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.primary
-                        )
-                    }
-                }
-
-                else -> { /* Other device types are not navigable */
-                }
             }
         }
+
     }
 }
