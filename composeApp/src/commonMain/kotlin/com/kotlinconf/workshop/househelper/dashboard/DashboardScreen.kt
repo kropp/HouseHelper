@@ -204,7 +204,11 @@ private fun DeviceCard(
 
             DeviceCardContent(
                 device = device,
-                modifier = Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick),
+                modifier = if (device is Toggleable) {
+                    Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                } else {
+                    Modifier
+                },
                 bottomText = when (device) {
                     is ThermostatDevice -> "${device.currentValue.roundToInt()}°C"
                     is HumidityDevice -> "${device.currentValue.roundToInt()}%"
@@ -253,7 +257,7 @@ private fun DeviceCardContent(
                 text = device.name,
                 style = MaterialTheme.typography.bodyMedium,
                 color = contentColor,
-                modifier = Modifier.padding(horizontal =  6.dp),
+                modifier = Modifier.padding(horizontal = 6.dp),
                 textAlign = TextAlign.Center,
             )
         }

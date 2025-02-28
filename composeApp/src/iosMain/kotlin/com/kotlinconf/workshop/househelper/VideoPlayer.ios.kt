@@ -37,12 +37,8 @@ actual fun VideoPlayer(
         uiView.layer.addSublayer(avPlayerLayer)
         AVPlayer(NSURL.URLWithString(url)!!).apply {
             avPlayerLayer.player = this
+            volume = 0.0f
         }
-    }
-    mediaPlayer.volume = 0.0f
-    LaunchedEffect(Unit) {
-        @OptIn(ExperimentalForeignApi::class)
-        avPlayerLayer.setFrame(uiView.frame)
     }
     val player = remember(mediaPlayer) { mediaPlayer.toControllableVideoPlayer() }
     videoPlayerState.controlledPlayer = player
