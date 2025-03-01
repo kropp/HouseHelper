@@ -32,6 +32,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -71,82 +72,88 @@ fun LightDetailsScreen(
         }
     }
 
-    Column(
-        modifier = Modifier.fillMaxSize()
-            .verticalScroll(rememberScrollState()),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        TopAppBar(
-            title = { device?.let { Text(text = it.name) } },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { device?.let { Text(text = it.name) } },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    IconButton(
+                        onClick = { device?.name?.let(onNavigateToRename) }
+                    ) {
+                        Icon(Icons.Default.Edit, contentDescription = "Edit name")
+                    }
                 }
-            },
-            actions = {
-                IconButton(
-                    onClick = { device?.name?.let(onNavigateToRename) }
-                ) {
-                    Icon(Icons.Default.Edit, contentDescription = "Edit name")
+            )
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .verticalScroll(rememberScrollState())
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            device?.let { light ->
+                Switch(
+                    checked = light.isOn,
+                    onCheckedChange = { viewModel.toggleLight() },
+                )
+
+                var localBrightness by remember { mutableIntStateOf(light.brightness) }
+                var isDragging by remember { mutableStateOf(false) }
+
+                LaunchedEffect(localBrightness) {
+                    if (!isDragging) {
+                        delay(50)
+                    }
+                    viewModel.updateBrightness(localBrightness)
                 }
-            }
-        )
 
-        device?.let { light ->
-            Switch(
-                checked = light.isOn,
-                onCheckedChange = { viewModel.toggleLight() },
-            )
+                Text(
+                    text = if (light.isOn) "${localBrightness.toInt()}%" else "0%",
+                    style = MaterialTheme.typography.bodyLarge
+                )
 
-            var localBrightness by remember { mutableIntStateOf(light.brightness) }
-            var isDragging by remember { mutableStateOf(false) }
+                LightSlider(
+                    light = light,
+                    localBrightness = localBrightness,
+                    onChangeBrightness = { localBrightness = it },
+                    isDragging = isDragging,
+                    onDragging = { isDragging = it },
+                )
 
-            LaunchedEffect(localBrightness) {
-                if (!isDragging) {
-                    delay(50)
-                }
-                viewModel.updateBrightness(localBrightness)
-            }
+                Text(
+                    text = "Color",
+                    style = MaterialTheme.typography.bodyLarge,
+                    modifier = Modifier.padding(top = 16.dp)
+                )
 
-            Text(
-                text = if (light.isOn) "${localBrightness.toInt()}%" else "0%",
-                style = MaterialTheme.typography.bodyLarge
-            )
-
-            LightSlider(
-                light = light,
-                localBrightness = localBrightness,
-                onChangeBrightness = { localBrightness = it },
-                isDragging = isDragging,
-                onDragging = { isDragging = it },
-            )
-
-            Text(
-                text = "Color",
-                style = MaterialTheme.typography.bodyLarge,
-                modifier = Modifier.padding(top = 16.dp)
-            )
-
-            FlowRow(
+                FlowRow(
 //                columns = GridCells.Fixed(4),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp),
-                modifier = Modifier.padding(horizontal = 32.dp)
-            ) {
-                DeviceConstants.Light.PREDEFINED_COLORS.forEach { color ->
-                    Box(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(MaterialTheme.shapes.medium)
-                            .background(color)
-                            .border(
-                                width = 2.dp,
-                                color = if (color == light.color) MaterialTheme.colorScheme.primary else Color.Transparent,
-                                shape = MaterialTheme.shapes.medium
-                            )
-                            .clickable { viewModel.updateColor(color) }
-                    )
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalArrangement = Arrangement.spacedBy(8.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
+                    DeviceConstants.Light.PREDEFINED_COLORS.forEach { color ->
+                        Box(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(MaterialTheme.shapes.medium)
+                                .background(color)
+                                .border(
+                                    width = 2.dp,
+                                    color = if (color == light.color) MaterialTheme.colorScheme.primary else Color.Transparent,
+                                    shape = MaterialTheme.shapes.medium
+                                )
+                                .clickable { viewModel.updateColor(color) }
+                        )
+                    }
                 }
             }
         }

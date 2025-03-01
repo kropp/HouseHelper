@@ -27,6 +27,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -52,77 +53,83 @@ fun CameraDetailsScreen(
 ) {
     val device by viewModel.camera.collectAsState(null)
 
-    Column(
-        modifier = Modifier.fillMaxSize(),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    ) {
-        TopAppBar(
-            title = { Text(text = "Camera Details") },
-            navigationIcon = {
-                IconButton(onClick = onNavigateUp) {
-                    Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text(text = "Camera Details") },
+                navigationIcon = {
+                    IconButton(onClick = onNavigateUp) {
+                        Icon(Icons.Default.ArrowBack, contentDescription = "Back")
+                    }
                 }
-            }
-        )
-
-        device?.let { camera ->
-            Text(
-                text = camera.name,
-                style = MaterialTheme.typography.headlineMedium
             )
-
-            Switch(
-                checked = camera.isOn,
-                onCheckedChange = { viewModel.toggleCamera() }
-            )
-
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                if (camera.isOn) {
-                    val infiniteTransition = rememberInfiniteTransition()
-                    val alpha by infiniteTransition.animateFloat(
-                        initialValue = 0f, targetValue = 1f,
-                        animationSpec = infiniteRepeatable(
-                            animation = tween(1000, easing = LinearEasing),
-                            repeatMode = RepeatMode.Reverse
-                        ),
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp)
-                            .clip(CircleShape)
-                            .alpha(alpha)
-                            .background(Color.Red)
-                            .size(12.dp)
-                    )
-                }
-
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            device?.let { camera ->
                 Text(
-                    text = if (camera.isOn) "Camera is streaming" else "Camera is off",
-                    style = MaterialTheme.typography.bodyLarge
+                    text = camera.name,
+                    style = MaterialTheme.typography.headlineMedium
+                )
+
+                Switch(
+                    checked = camera.isOn,
+                    onCheckedChange = { viewModel.toggleCamera() }
+                )
+
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    if (camera.isOn) {
+                        val infiniteTransition = rememberInfiniteTransition()
+                        val alpha by infiniteTransition.animateFloat(
+                            initialValue = 0f, targetValue = 1f,
+                            animationSpec = infiniteRepeatable(
+                                animation = tween(1000, easing = LinearEasing),
+                                repeatMode = RepeatMode.Reverse
+                            ),
+                        )
+
+                        Box(
+                            modifier = Modifier
+                                .padding(horizontal = 8.dp)
+                                .clip(CircleShape)
+                                .alpha(alpha)
+                                .background(Color.Red)
+                                .size(12.dp)
+                        )
+                    }
+
+                    Text(
+                        text = if (camera.isOn) "Camera is streaming" else "Camera is off",
+                        style = MaterialTheme.typography.bodyLarge
+                    )
+                }
+
+                val videoPlayerState = rememberVideoPlayerState()
+
+                LaunchedEffect(camera.isOn) {
+                    if (camera.isOn) {
+                        videoPlayerState.play()
+                    } else {
+                        videoPlayerState.stop()
+                    }
+                }
+
+                VideoPlayer(
+                    url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .aspectRatio(16f / 9f)
+                        .fillMaxWidth(),
+                    videoPlayerState = videoPlayerState,
                 )
             }
-
-            val videoPlayerState = rememberVideoPlayerState()
-
-            LaunchedEffect(camera.isOn) {
-                if (camera.isOn) {
-                    videoPlayerState.play()
-                } else {
-                    videoPlayerState.stop()
-                }
-            }
-
-            VideoPlayer(
-                url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .clip(MaterialTheme.shapes.medium)
-                    .aspectRatio(16f / 9f)
-                    .fillMaxWidth(),
-                videoPlayerState = videoPlayerState,
-            )
         }
     }
 }
