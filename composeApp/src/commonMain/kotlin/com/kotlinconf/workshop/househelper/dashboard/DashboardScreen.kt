@@ -85,7 +85,6 @@ fun DashboardScreen(
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         contentPadding = WindowInsets.safeDrawing.asPaddingValues(),
-        verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         items(rooms) { room ->
             val roomViewModel: RoomViewModel = koinViewModel(
@@ -126,14 +125,13 @@ private fun RoomSection(
     onLongClick: (Device) -> Unit,
 ) {
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth(),
     ) {
         Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onExpand(!expanded) }
-                .padding(vertical = 8.dp),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             val rotation by animateFloatAsState(if (expanded) 0f else -90f)
@@ -158,6 +156,7 @@ private fun RoomSection(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
+                    .padding(vertical = 16.dp)
                     .wrapContentWidth(Alignment.CenterHorizontally),
             ) {
                 devices.forEach { device ->
