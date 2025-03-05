@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class LightDetailsViewModel(
     private val houseService: HouseService,
@@ -24,26 +25,34 @@ class LightDetailsViewModel(
         )
 
     fun toggleLight() {
-        light.value?.let { light ->
-            houseService.toggle(light)
+        viewModelScope.launch {
+            light.value?.let { light ->
+                houseService.toggle(light)
+            }
         }
     }
 
     fun updateBrightness(brightness: Int) {
-        light.value?.let { light ->
-            houseService.setBrightness(light, brightness)
+        viewModelScope.launch {
+            light.value?.let { light ->
+                houseService.setBrightness(light, brightness)
+            }
         }
     }
 
     fun updateColor(color: Color) {
-        light.value?.let { light ->
-            houseService.setColor(light, color)
+        viewModelScope.launch {
+            light.value?.let { light ->
+                houseService.setColor(light, color)
+            }
         }
     }
 
     fun renameLightDevice(newName: String) {
-        light.value?.let { light ->
-            houseService.rename(light, newName)
-        }
+        viewModelScope.launch {
+            light.value?.let { light ->
+                houseService.rename(light, newName)
+            }
+            }
     }
 }

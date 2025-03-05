@@ -7,6 +7,7 @@ import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 
 class DashboardViewModel(
@@ -19,7 +20,8 @@ class DashboardViewModel(
             initialValue = emptyList()
         )
 
-    fun getDevicesForRoom(roomId: RoomId): StateFlow<List<Device>> = houseService.getDevicesForRoom(roomId)
+    fun getDevicesForRoom(roomId: RoomId): StateFlow<List<Device>> = houseService
+        .getDevicesForRoom(roomId)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5000),
@@ -27,10 +29,8 @@ class DashboardViewModel(
         )
 
     fun onDeviceClicked(device: Device) {
-        houseService.toggle(device)
-    }
-
-    fun onDeviceLongPressed(device: Device) {
-        // Navigation is now handled at the screen level
+        viewModelScope.launch {
+            houseService.toggle(device)
+        }
     }
 }

@@ -81,7 +81,7 @@ class DemoHouseService : HouseService {
     }
 
     @Suppress("DEPRECATION")
-    override fun toggle(device: Device): Boolean {
+    override suspend fun toggle(device: Device): Boolean {
         if (device !is Toggleable) {
             return false
         }
@@ -100,7 +100,7 @@ class DemoHouseService : HouseService {
         return true
     }
 
-    override fun setBrightness(light: LightDevice, brightness: Int) {
+    override suspend fun setBrightness(light: LightDevice, brightness: Int) {
         updateDevice(
             light.copy(
                 brightness = brightness,
@@ -109,11 +109,11 @@ class DemoHouseService : HouseService {
         )
     }
 
-    override fun setColor(light: LightDevice, color: Color) {
+    override suspend fun setColor(light: LightDevice, color: Color) {
         updateDevice(light.copy(color = color))
     }
 
-    override fun rename(device: Device, name: String) {
+    override suspend fun rename(device: Device, name: String) {
         when (device) {
             is LightDevice -> updateDevice(device.copy(name = name))
             is SwitchDevice -> updateDevice(device.copy(name = name))

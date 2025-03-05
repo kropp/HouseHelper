@@ -8,10 +8,11 @@ import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.launch
 
 class CameraDetailsViewModel(
     private val houseService: HouseService,
-    private val deviceId: DeviceId,
+    deviceId: DeviceId,
 ) : ViewModel() {
     val camera = houseService.getDevice(deviceId)
         .map { it as? CameraDevice }
@@ -22,8 +23,10 @@ class CameraDetailsViewModel(
         )
 
     fun toggleCamera() {
-        camera.value?.let { camera ->
-            houseService.toggle(camera)
+        viewModelScope.launch {
+            camera.value?.let { camera ->
+                houseService.toggle(camera)
+            }
         }
     }
 }

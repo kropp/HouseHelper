@@ -14,8 +14,8 @@ interface HouseService {
     fun getRooms(): Flow<List<Room>>
     fun getDevicesForRoom(roomId: RoomId): Flow<List<Device>>
     fun getDevice(deviceId: DeviceId): Flow<Device?>
-    fun toggle(device: Device): Boolean
-    fun setBrightness(device: LightDevice, brightness: Int)
-    fun setColor(device: LightDevice, color: Color)
-    fun rename(device: Device, name: String)
+    suspend fun toggle(device: Device): Boolean
+    suspend fun setBrightness(device: LightDevice, brightness: Int)
+    suspend fun setColor(device: LightDevice, color: Color)
+    suspend fun rename(device: Device, name: String)
 }
