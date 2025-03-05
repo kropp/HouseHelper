@@ -71,7 +71,6 @@ fun DashboardScreen(
 
     DashboardScreen(
         rooms = rooms,
-        onDeviceClicked = viewModel::onDeviceClicked,
         onNavigateToLightDetails = onNavigateToLightDetails,
         onNavigateToCameraDetails = onNavigateToCameraDetails,
     )
@@ -80,7 +79,6 @@ fun DashboardScreen(
 @Composable
 fun DashboardScreen(
     rooms: List<Room>,
-    onDeviceClicked: (Device) -> Unit,
     onNavigateToLightDetails: (DeviceId) -> Unit,
     onNavigateToCameraDetails: (DeviceId) -> Unit,
 ) {
@@ -92,7 +90,7 @@ fun DashboardScreen(
         items(rooms) { room ->
             val roomViewModel: RoomViewModel = koinViewModel(
                 key = room.id.value,
-                parameters =  { parametersOf(room.id) },
+                parameters = { parametersOf(room.id) },
             )
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
             val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()
@@ -101,8 +99,8 @@ fun DashboardScreen(
                 room = room,
                 expanded = expanded,
                 devices = devices,
-                onExpand = { roomViewModel.expand(it) },
-                onClick = onDeviceClicked,
+                onExpand = { isExpanded -> roomViewModel.expand(isExpanded) },
+                onClick = { device -> roomViewModel.onDeviceClicked(device) },
                 onLongClick = { device ->
                     when (device) {
                         is LightDevice -> onNavigateToLightDetails(device.deviceId)

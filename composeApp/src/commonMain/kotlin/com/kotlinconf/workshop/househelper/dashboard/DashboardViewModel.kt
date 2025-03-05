@@ -10,9 +10,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-
 class DashboardViewModel(
-    private val houseService: HouseService,
+    houseService: HouseService,
 ) : ViewModel() {
     val rooms: StateFlow<List<Room>> = houseService.getRooms()
         .stateIn(
@@ -20,10 +19,4 @@ class DashboardViewModel(
             started = SharingStarted.WhileSubscribed(5000),
             initialValue = emptyList()
         )
-
-    fun onDeviceClicked(device: Device) {
-        viewModelScope.launch {
-            houseService.toggle(device)
-        }
-    }
 }
