@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.Device
@@ -12,9 +13,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 
 class RoomViewModel(
-    val houseService: HouseService,
-    val roomId: RoomId
-): ViewModel() {
+    private val houseService: HouseService,
+    private val roomId: RoomId,
+    private val savedStateHandle: SavedStateHandle,
+) : ViewModel() {
     val devices: StateFlow<List<Device>> = houseService
         .getDevicesForRoom(roomId)
         .stateIn(
@@ -23,10 +25,9 @@ class RoomViewModel(
             initialValue = emptyList()
         )
 
-    private val _expanded = MutableStateFlow(true)
-    val expanded = _expanded
+    val expanded = savedStateHandle.getStateFlow("expanded", true)
 
     fun expand(isExpanded: Boolean) {
-        _expanded.update { isExpanded }
+        savedStateHandle.set("expanded", isExpanded)
     }
 }
