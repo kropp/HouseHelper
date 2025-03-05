@@ -15,17 +15,14 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
@@ -42,17 +39,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
-import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.semantics.testTag
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
@@ -65,6 +58,7 @@ import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 import kotlin.math.roundToInt
 
 @Composable
@@ -74,14 +68,9 @@ fun DashboardScreen(
     viewModel: DashboardViewModel = koinViewModel(),
 ) {
     val rooms by viewModel.rooms.collectAsState()
-    val devicesByRoom = rooms.associate { room ->
-        val devices by viewModel.getDevicesForRoom(room.id).collectAsState()
-        room.id to devices
-    }
 
     DashboardScreen(
         rooms = rooms,
-        devicesByRoom = devicesByRoom,
         onDeviceClicked = viewModel::onDeviceClicked,
         onNavigateToLightDetails = onNavigateToLightDetails,
         onNavigateToCameraDetails = onNavigateToCameraDetails,
@@ -91,7 +80,6 @@ fun DashboardScreen(
 @Composable
 fun DashboardScreen(
     rooms: List<Room>,
-    devicesByRoom: Map<RoomId, List<Device>>,
     onDeviceClicked: (Device) -> Unit,
     onNavigateToLightDetails: (DeviceId) -> Unit,
     onNavigateToCameraDetails: (DeviceId) -> Unit,
@@ -102,10 +90,18 @@ fun DashboardScreen(
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         items(rooms) { room ->
-            val devices = devicesByRoom[room.id] ?: emptyList()
+            val roomViewModel: RoomViewModel = koinViewModel(
+                key = room.id.value,
+                parameters =  { parametersOf(room.id) },
+            )
+            val devices by roomViewModel.devices.collectAsStateWithLifecycle()
+            val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()
+
             RoomSection(
                 room = room,
+                expanded = expanded,
                 devices = devices,
+                onExpand = { roomViewModel.expand(it) },
                 onClick = onDeviceClicked,
                 onLongClick = { device ->
                     when (device) {
@@ -125,11 +121,12 @@ fun DashboardScreen(
 @Composable
 private fun RoomSection(
     room: Room,
+    expanded: Boolean,
     devices: List<Device>,
+    onExpand: (Boolean) -> Unit,
     onClick: (Device) -> Unit,
     onLongClick: (Device) -> Unit,
 ) {
-    var expanded by remember { mutableStateOf(true) }
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = Modifier.fillMaxWidth(),
@@ -137,7 +134,7 @@ private fun RoomSection(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { expanded = !expanded }
+                .clickable { onExpand(!expanded) }
                 .padding(vertical = 8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {

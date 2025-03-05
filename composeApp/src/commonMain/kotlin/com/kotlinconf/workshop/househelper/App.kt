@@ -8,9 +8,6 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
@@ -21,13 +18,8 @@ import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
-import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
-import com.kotlinconf.workshop.househelper.data.HouseService
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
-import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
 import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
-import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
 import com.kotlinconf.workshop.househelper.devices.RenameLightDialog
 import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
@@ -50,15 +42,12 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.KoinMultiplatformApplication
-import org.koin.core.module.dsl.viewModelOf
-import org.koin.dsl.koinConfiguration
-import org.koin.dsl.module
 import kotlin.reflect.typeOf
 
 @Composable
 @Preview
 fun App() {
-    KoinMultiplatformApplication(koinConfiguration()) {
+    KoinMultiplatformApplication(createKoinConfig()) {
         DevelopmentEntryPoint {
             MaterialTheme(
                 colorScheme = if (isSystemInDarkTheme()) {
@@ -154,18 +143,4 @@ fun App() {
             }
         }
     }
-}
-
-private fun koinConfiguration() = koinConfiguration {
-    val appModule = module {
-        single<HouseService> { DemoHouseService() }
-    }
-
-    val viewModelModule = module {
-        viewModelOf(::DashboardViewModel)
-        viewModelOf(::LightDetailsViewModel)
-        viewModelOf(::CameraDetailsViewModel)
-    }
-
-    modules(appModule, viewModelModule)
 }
