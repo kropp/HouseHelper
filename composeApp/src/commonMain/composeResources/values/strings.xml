@@ -12,8 +12,6 @@
     <string name="onboarding_done_subtitle">Get ready to experience the future of home automation</string>
     <string name="onboarding_next_button">Next</string>
 
-    <!-- Icons for onboarding screens -->
-    <string name="onboarding_welcome_icon">Welcome screen icon</string>
-    <string name="onboarding_about_icon">About screen icon</string>
-    <string name="onboarding_done_icon">Done screen icon</string>
+    <string name="dashboard_tab_rooms">Rooms</string>
+    <string name="dashboard_tab_settings">Settings</string>
 </resources>
