@@ -9,13 +9,16 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
+import androidx.core.uri.UriUtils
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
@@ -38,107 +41,122 @@ import househelper.composeapp.generated.resources.onboarding_done_subtitle
 import househelper.composeapp.generated.resources.onboarding_next_button
 import househelper.composeapp.generated.resources.onboarding_welcome
 import househelper.composeapp.generated.resources.onboarding_welcome_subtitle
+import kotlinx.coroutines.channels.Channel
 import org.jetbrains.compose.resources.stringResource
-import org.jetbrains.compose.reload.DevelopmentEntryPoint
 import org.jetbrains.compose.ui.tooling.preview.Preview
-import org.koin.compose.KoinMultiplatformApplication
 import kotlin.reflect.typeOf
+
+fun navigateToDeepLink(uri: String) {
+    deepLinkUris.trySend(uri)
+}
+
+private val deepLinkUris = Channel<String>(capacity = 1)
 
 @Composable
 @Preview
 fun App() {
-    KoinMultiplatformApplication(createKoinConfig()) {
-        DevelopmentEntryPoint {
-            MaterialTheme(
-                colorScheme = if (isSystemInDarkTheme()) {
-                    AppDarkColorScheme
-                } else {
-                    AppLightColorScheme
-                },
-                shapes = AppShapes,
-            ) {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    val navController = rememberNavController()
-                    NavHost(navController, startDestination = StartScreens) {
-                        navigation<StartScreens>(startDestination = Welcome) {
-                            composable<Welcome> {
-                                Onboarding(
-                                    text = stringResource(Res.string.onboarding_welcome),
-                                    subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
-                                    buttonText = stringResource(Res.string.onboarding_next_button),
-                                    icon = Icons.Default.Favorite,
-                                    onNext = { navController.navigate(Onboarding) }
-                                )
-                            }
-                            composable<Onboarding> {
-                                Onboarding(
-                                    text = stringResource(Res.string.onboarding_about),
-                                    subtitle = stringResource(Res.string.onboarding_about_subtitle),
-                                    buttonText = stringResource(Res.string.onboarding_next_button),
-                                    icon = Icons.Default.Info,
-                                    onNext = { navController.navigate(OnboardingDone) }
-                                )
-                            }
-                            composable<OnboardingDone> {
-                                Onboarding(
-                                    text = stringResource(Res.string.onboarding_done),
-                                    subtitle = stringResource(Res.string.onboarding_done_subtitle),
-                                    buttonText = stringResource(Res.string.onboarding_next_button),
-                                    icon = Icons.Default.Home,
-                                    onNext = { navController.navigate(Dashboard) }
-                                )
-                            }
-                        }
-                        composable<Dashboard> {
-                            DashboardScreen(
-                                onNavigateToLightDetails = { deviceId ->
-                                    navController.navigate(LightDetails(deviceId))
-                                },
-                                onNavigateToCameraDetails = { deviceId ->
-                                    navController.navigate(CameraDetails(deviceId))
-                                }
-                            )
-                        }
-                        composable<LightDetails>(
-                            typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                        ) {
-                            val deviceId = it.toRoute<LightDetails>().deviceId
+    MaterialTheme(
+        colorScheme = if (isSystemInDarkTheme()) {
+            AppDarkColorScheme
+        } else {
+            AppLightColorScheme
+        },
+        shapes = AppShapes,
+    ) {
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+            color = MaterialTheme.colorScheme.background
+        ) {
+            val navController = rememberNavController()
 
-                            val newName = navController.currentBackStackEntry
-                                ?.savedStateHandle
-                                ?.getStateFlow<String?>("newName", null)
-                                ?.collectAsState()
-                                ?.value
+            LaunchedEffect(Unit) {
+                while (true) {
+                    val uri = deepLinkUris.receive()
+                    navController.navigate(deepLink = UriUtils.parse(uri))
+                }
+            }
 
-                            LightDetailsScreen(
-                                deviceId = deviceId,
-                                newName = newName,
-                                onNavigateUp = { navController.navigateUp() },
-                                onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) }
-                            )
-                        }
-                        composable<CameraDetails>(
-                            typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                        ) {
-                            val deviceId = it.toRoute<CameraDetails>().deviceId
-                            CameraDetailsScreen(
-                                deviceId = deviceId,
-                                onNavigateUp = { navController.navigateUp() },
-                            )
-                        }
-                        dialog<RenameDevice> {
-                            RenameLightDialog(
-                                currentName = it.toRoute<RenameDevice>().currentName,
-                                onDismiss = {
-                                    navController.previousBackStackEntry?.savedStateHandle?.set("newName", it)
-                                    navController.navigateUp()
-                                },
-                            )
-                        }
+            NavHost(navController, startDestination = StartScreens) {
+                navigation<StartScreens>(startDestination = Welcome) {
+                    composable<Welcome> {
+                        Onboarding(
+                            text = stringResource(Res.string.onboarding_welcome),
+                            subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Favorite,
+                            onNext = { navController.navigate(Onboarding) }
+                        )
                     }
+                    composable<Onboarding> {
+                        Onboarding(
+                            text = stringResource(Res.string.onboarding_about),
+                            subtitle = stringResource(Res.string.onboarding_about_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Info,
+                            onNext = { navController.navigate(OnboardingDone) }
+                        )
+                    }
+                    composable<OnboardingDone> {
+                        Onboarding(
+                            text = stringResource(Res.string.onboarding_done),
+                            subtitle = stringResource(Res.string.onboarding_done_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Home,
+                            onNext = { navController.navigate(Dashboard) }
+                        )
+                    }
+                }
+                composable<Dashboard> {
+                    DashboardScreen(
+                        onNavigateToLightDetails = { deviceId ->
+                            navController.navigate(LightDetails(deviceId))
+                        },
+                        onNavigateToCameraDetails = { deviceId ->
+                            navController.navigate(CameraDetails(deviceId))
+                        }
+                    )
+                }
+                composable<LightDetails>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            // TODO: make this open a stack of screens
+                            uriPattern = "househelper://light/{deviceId}"
+                        }
+                    )
+                ) {
+                    val deviceId = it.toRoute<LightDetails>().deviceId
+
+                    val newName = navController.currentBackStackEntry
+                        ?.savedStateHandle
+                        ?.getStateFlow<String?>("newName", null)
+                        ?.collectAsState()
+                        ?.value
+
+                    LightDetailsScreen(
+                        deviceId = deviceId,
+                        newName = newName,
+                        onNavigateUp = { navController.navigateUp() },
+                        onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) }
+                    )
+                }
+                composable<CameraDetails>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                ) {
+                    val deviceId = it.toRoute<CameraDetails>().deviceId
+                    CameraDetailsScreen(
+                        deviceId = deviceId,
+                        onNavigateUp = { navController.navigateUp() },
+                    )
+                }
+                dialog<RenameDevice> {
+                    RenameLightDialog(
+                        currentName = it.toRoute<RenameDevice>().currentName,
+                        onDismiss = {
+                            navController.previousBackStackEntry?.savedStateHandle?.set("newName", it)
+                            navController.navigateUp()
+                        },
+                    )
                 }
             }
         }
