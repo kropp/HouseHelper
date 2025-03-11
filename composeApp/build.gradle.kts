@@ -52,7 +52,7 @@ kotlin {
 
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
-        moduleName = "houseHelper"
+        outputModuleName = "houseHelper"
         browser {
             val rootDirPath = project.rootDir.path
             val projectDirPath = project.projectDir.path
