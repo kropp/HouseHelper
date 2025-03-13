@@ -11,6 +11,8 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.uri.UriUtils
 import androidx.navigation.compose.NavHost
@@ -124,18 +126,18 @@ fun App() {
                             uriPattern = "househelper://light/{deviceId}"
                         }
                     )
-                ) {
-                    val deviceId = it.toRoute<LightDetails>().deviceId
+                ) { backstackEntry ->
+                    val deviceId = backstackEntry.toRoute<LightDetails>().deviceId
 
-                    val newName = navController.currentBackStackEntry
-                        ?.savedStateHandle
-                        ?.getStateFlow<String?>("newName", null)
-                        ?.collectAsState()
-                        ?.value
+                    val results = remember(backstackEntry) {
+                        backstackEntry.savedStateHandle.getStateFlow<String?>("newName", null)
+                    }
+                    val newName by results.collectAsState()
 
                     LightDetailsScreen(
                         deviceId = deviceId,
                         newName = newName,
+                        onNewNameProcessed = { backstackEntry.savedStateHandle["newName"] = null },
                         onNavigateUp = { navController.navigateUp() },
                         onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) }
                     )

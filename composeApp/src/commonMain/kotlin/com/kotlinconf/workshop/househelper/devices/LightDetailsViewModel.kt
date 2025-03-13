@@ -53,6 +53,6 @@ class LightDetailsViewModel(
             light.value?.let { light ->
                 houseService.rename(light, newName)
             }
-            }
+        }
     }
 }

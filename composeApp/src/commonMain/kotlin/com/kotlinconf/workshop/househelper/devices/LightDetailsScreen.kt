@@ -59,15 +59,17 @@ import org.koin.core.parameter.parametersOf
 fun LightDetailsScreen(
     deviceId: DeviceId,
     newName: String?,
+    onNewNameProcessed: () -> Unit,
     onNavigateUp: () -> Unit,
     onNavigateToRename: (String) -> Unit = {},
     viewModel: LightDetailsViewModel = koinViewModel { parametersOf(deviceId) }
 ) {
     val device = viewModel.light.collectAsState().value
 
-    LaunchedEffect(device, newName) {
-        if (device != null && newName != null && device.name != newName) {
+    LaunchedEffect(newName) {
+        if (newName != null) {
             viewModel.renameLightDevice(newName)
+            onNewNameProcessed()
         }
     }
 
