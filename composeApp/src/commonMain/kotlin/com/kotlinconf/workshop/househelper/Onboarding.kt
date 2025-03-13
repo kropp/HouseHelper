@@ -62,10 +62,10 @@ fun Onboarding(
                     modifier = Modifier
                         .fillMaxWidth(0.85f)
                         .padding(16.dp),
-                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
                 ) {
                     Column(
-                        modifier = Modifier.padding(24.dp),
+                        modifier = Modifier.fillMaxWidth().padding(24.dp),
                         verticalArrangement = Arrangement.Center,
                         horizontalAlignment = Alignment.CenterHorizontally,
                     ) {

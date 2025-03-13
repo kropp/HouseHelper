@@ -90,6 +90,7 @@ fun LightDetailsScreen(
                         Icon(Icons.Default.Edit, contentDescription = "Edit name")
                     }
 
+                    @Suppress("DEPRECATION") // https://goomics.net/50
                     val clipboardManager = LocalClipboardManager.current
                     IconButton(
                         onClick = {
