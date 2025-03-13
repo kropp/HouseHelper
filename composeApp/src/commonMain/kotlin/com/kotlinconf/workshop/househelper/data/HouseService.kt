@@ -16,7 +16,7 @@ interface HouseService {
     fun getDevice(deviceId: DeviceId): Flow<Device?>
     fun getCameraFootage(deviceId: DeviceId): Flow<String>
     suspend fun toggle(device: Device): Boolean
-    suspend fun setBrightness(device: LightDevice, brightness: Int)
-    suspend fun setColor(device: LightDevice, color: Color)
+    suspend fun setBrightness(light: LightDevice, brightness: Int)
+    suspend fun setColor(light: LightDevice, color: Color)
     suspend fun rename(device: Device, name: String)
 }
