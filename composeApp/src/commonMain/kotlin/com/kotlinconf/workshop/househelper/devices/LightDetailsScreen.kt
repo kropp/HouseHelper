@@ -47,6 +47,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.LightDevice
@@ -64,7 +65,7 @@ fun LightDetailsScreen(
     onNavigateToRename: (String) -> Unit = {},
     viewModel: LightDetailsViewModel = koinViewModel { parametersOf(deviceId) }
 ) {
-    val device = viewModel.light.collectAsState().value
+    val device = viewModel.light.collectAsStateWithLifecycle().value
 
     LaunchedEffect(newName) {
         if (newName != null) {

@@ -2,11 +2,13 @@ package com.kotlinconf.workshop.househelper.data
 
 import androidx.compose.ui.graphics.Color
 import com.kotlinconf.workshop.househelper.*
+import com.kotlinconf.workshop.househelper.utils.imageUrls
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -66,6 +68,18 @@ class DemoHouseService : HouseService {
 
     override fun getDevice(deviceId: DeviceId): Flow<Device?> = devices.map { deviceList ->
         deviceList.find { device -> device.deviceId.value == deviceId.value }
+    }
+
+    override fun getCameraFootage(deviceId: DeviceId): Flow<String> {
+        return flow {
+            while (true) {
+                val images = imageUrls.shuffled()
+                for (image in images) {
+                    emit(image)
+                    delay(5000)
+                }
+            }
+        }
     }
 
     private fun updateDevice(device: Device) {

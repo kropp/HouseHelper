@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.data.HouseService
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.map
@@ -17,6 +18,13 @@ class CameraDetailsViewModel(
 ) : ViewModel() {
     val camera: StateFlow<CameraDevice?> = houseService.getDevice(deviceId)
         .map { it as? CameraDevice }
+        .stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.Companion.WhileSubscribed(5000),
+            initialValue = null
+        )
+
+    val cameraFootage: StateFlow<String?> = houseService.getCameraFootage(deviceId)
         .stateIn(
             scope = viewModelScope,
             started = SharingStarted.Companion.WhileSubscribed(5000),

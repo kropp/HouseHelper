@@ -22,6 +22,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceId
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.dashboard_tab_rooms
@@ -68,7 +69,7 @@ fun DashboardScreen(
         ) { tabIndex ->
             when (tabIndex) {
                 0 -> {
-                    val rooms by viewModel.rooms.collectAsState()
+                    val rooms by viewModel.rooms.collectAsStateWithLifecycle()
                     RoomsContent(
                         rooms = rooms,
                         onNavigateToLightDetails = onNavigateToLightDetails,

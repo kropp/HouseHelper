@@ -15,6 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.uri.UriUtils
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
@@ -132,7 +133,7 @@ fun App() {
                     val results = remember(backstackEntry) {
                         backstackEntry.savedStateHandle.getStateFlow<String?>("newName", null)
                     }
-                    val newName by results.collectAsState()
+                    val newName by results.collectAsStateWithLifecycle()
 
                     LightDetailsScreen(
                         deviceId = deviceId,

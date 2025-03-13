@@ -1,6 +1,5 @@
 package com.kotlinconf.workshop.househelper.devices
 
-import androidx.compose.animation.animateColor
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
@@ -24,20 +23,27 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.ColorMatrix
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import coil3.compose.AsyncImage
+import coil3.compose.LocalPlatformContext
+import coil3.request.ImageRequest
+import coil3.request.crossfade
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.VideoPlayer
 import com.kotlinconf.workshop.househelper.rememberVideoPlayerState
@@ -51,12 +57,12 @@ fun CameraDetailsScreen(
     onNavigateUp: () -> Unit,
     viewModel: CameraDetailsViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
-    val device by viewModel.camera.collectAsState(null)
+    val device by viewModel.camera.collectAsStateWithLifecycle(null)
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(text = "Camera Details") },
+                title = { Text(text = device?.name ?: "") },
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
@@ -73,11 +79,6 @@ fun CameraDetailsScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             device?.let { camera ->
-                Text(
-                    text = camera.name,
-                    style = MaterialTheme.typography.headlineMedium
-                )
-
                 Switch(
                     checked = camera.isOn,
                     onCheckedChange = { viewModel.toggleCamera() }
@@ -119,6 +120,24 @@ fun CameraDetailsScreen(
                         videoPlayerState.stop()
                     }
                 }
+
+                val footageUrl by viewModel.cameraFootage.collectAsStateWithLifecycle()
+                AsyncImage(
+                    model = ImageRequest.Builder(LocalPlatformContext.current)
+                        .data(footageUrl)
+                        .crossfade(true)
+                        .build(),
+                    contentDescription = "Camera image",
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .clip(MaterialTheme.shapes.medium)
+                        .aspectRatio(16f / 9f)
+                        .fillMaxWidth(),
+                    contentScale = ContentScale.Crop,
+                    colorFilter = ColorFilter.colorMatrix(
+                        ColorMatrix().apply { setToSaturation(0f) }
+                    ),
+                )
 
                 VideoPlayer(
                     url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
