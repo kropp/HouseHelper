@@ -56,6 +56,7 @@ import com.kotlinconf.workshop.househelper.LightDevice
 import com.kotlinconf.workshop.househelper.Room
 import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
+import com.kotlinconf.workshop.househelper.utils.onRightClick
 import org.jetbrains.compose.resources.painterResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -184,7 +185,9 @@ private fun DeviceCard(
             DeviceCardContent(
                 device = device,
                 modifier = if (device is Toggleable) {
-                    Modifier.combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                    Modifier
+                        .combinedClickable(onClick = onClick, onLongClick = onLongClick)
+                        .onRightClick(onLongClick)
                 } else {
                     Modifier
                 },
@@ -259,6 +262,5 @@ private fun DeviceCardContent(
                 )
             }
         }
-
     }
 }
