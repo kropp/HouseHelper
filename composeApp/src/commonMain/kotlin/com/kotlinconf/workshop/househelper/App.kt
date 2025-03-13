@@ -16,6 +16,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.uri.UriUtils
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
@@ -75,7 +76,7 @@ fun App() {
             LaunchedEffect(Unit) {
                 while (true) {
                     val uri = deepLinkUris.receive()
-                    navController.navigate(deepLink = UriUtils.parse(uri))
+                    navController.navigate(deepLink = NavUri(uri))
                 }
             }
 
