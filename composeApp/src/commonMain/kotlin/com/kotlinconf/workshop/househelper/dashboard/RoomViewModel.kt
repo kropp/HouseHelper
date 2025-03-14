@@ -8,6 +8,7 @@ import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.data.HouseService
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -30,9 +31,10 @@ class RoomViewModel(
         }
     }
 
-    val expanded = savedStateHandle.getStateFlow("expanded", true)
+    private val _expanded = savedStateHandle.getMutableStateFlow("expanded", true)
+    val expanded = _expanded.asStateFlow()
 
     fun expand(isExpanded: Boolean) {
-        savedStateHandle.set("expanded", isExpanded)
+        _expanded.value = isExpanded
     }
 }
