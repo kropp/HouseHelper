@@ -10,19 +10,17 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.core.uri.UriUtils
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
+import androidx.navigation.parseStringAsNavUri
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
@@ -76,7 +74,7 @@ fun App() {
             LaunchedEffect(Unit) {
                 while (true) {
                     val uri = deepLinkUris.receive()
-                    navController.navigate(deepLink = NavUri(uri))
+                    navController.navigate(deepLink = parseStringAsNavUri(uri))
                 }
             }
 
