@@ -104,7 +104,11 @@ fun App() {
                             subtitle = stringResource(Res.string.onboarding_done_subtitle),
                             buttonText = stringResource(Res.string.onboarding_next_button),
                             icon = Icons.Default.Home,
-                            onNext = { navController.navigate(Dashboard) }
+                            onNext = {
+                                navController.navigate(Dashboard) {
+                                    popUpTo<StartScreens>()
+                                }
+                            }
                         )
                     }
                 }
@@ -122,32 +126,28 @@ fun App() {
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType),
                     deepLinks = listOf(
                         navDeepLink {
-                            // TODO: make this open a stack of screens
                             uriPattern = "househelper://light/{deviceId}"
                         }
                     )
                 ) { backstackEntry ->
-                    val deviceId = backstackEntry.toRoute<LightDetails>().deviceId
-
                     val results = remember(backstackEntry) {
                         backstackEntry.savedStateHandle.getStateFlow<String?>("newName", null)
                     }
                     val newName by results.collectAsStateWithLifecycle()
 
                     LightDetailsScreen(
-                        deviceId = deviceId,
+                        deviceId = backstackEntry.toRoute<LightDetails>().deviceId,
                         newName = newName,
                         onNewNameProcessed = { backstackEntry.savedStateHandle["newName"] = null },
                         onNavigateUp = { navController.navigateUp() },
-                        onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) }
+                        onNavigateToRename = { deviceId -> navController.navigate(RenameDevice(deviceId)) },
                     )
                 }
                 composable<CameraDetails>(
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
                 ) {
-                    val deviceId = it.toRoute<CameraDetails>().deviceId
                     CameraDetailsScreen(
-                        deviceId = deviceId,
+                        deviceId = it.toRoute<CameraDetails>().deviceId,
                         onNavigateUp = { navController.navigateUp() },
                     )
                 }
