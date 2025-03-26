@@ -34,10 +34,9 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.DeviceId
-import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.data.DemoHouseService
 import org.koin.core.parameter.parametersOf
 
@@ -49,8 +48,7 @@ fun CameraDetailsScreen(
     onNavigateToRename: (DeviceId) -> Unit,
     viewModel: CameraDetailsViewModel = viewModel { CameraDetailsViewModel(DemoHouseService(), deviceId) },
 ) {
-    // TODO Task 4: replace this hardcoded value with data from the ViewModel
-    val device = CameraDevice(deviceId, "Fake Camera", roomId = RoomId(""))
+    val device by viewModel.camera.collectAsStateWithLifecycle(null)
 
     Scaffold(
         topBar = {
@@ -82,7 +80,7 @@ fun CameraDetailsScreen(
                 Switch(
                     checked = camera.isOn,
                     onCheckedChange = {
-                        // TODO Task 4: toggle the camera state through the ViewModel
+                        viewModel.toggleCamera()
                     }
                 )
 
