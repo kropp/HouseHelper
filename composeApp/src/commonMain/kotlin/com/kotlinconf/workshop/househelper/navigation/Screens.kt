@@ -27,4 +27,4 @@ data class LightDetails(val deviceId: DeviceId)
 data class CameraDetails(val deviceId: DeviceId)
 
 @Serializable
-data class RenameDevice(val deviceId: DeviceId)
+data class RenameDevice(val currentName: String)

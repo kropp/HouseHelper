@@ -157,21 +157,27 @@ fun App() {
                 }
                 composable<CameraDetails>(
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
+                ) { backstackEntry ->
+                    val results = remember(backstackEntry) {
+                        backstackEntry.savedStateHandle.getStateFlow<String?>("newName", null)
+                    }
+
+                    val newName by results.collectAsStateWithLifecycle()
                     CameraDetailsScreen(
-                        deviceId = it.toRoute<CameraDetails>().deviceId,
-                        onNavigateUp = { navController.navigateUp() },
-                        onNavigateToRename = { deviceId ->
-                            navController.navigate(RenameDevice(deviceId))
+                        deviceId = backstackEntry.toRoute<CameraDetails>().deviceId,
+                        newName = newName,
+                        onNewNameProcessed = { backstackEntry.savedStateHandle["newName"] = null },
+                        onNavigateToRename = { currentName ->
+                            navController.navigate(RenameDevice(currentName))
                         },
+                        onNavigateUp = { navController.navigateUp() }
                     )
                 }
-                dialog<RenameDevice>(
-                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
+                dialog<RenameDevice> {
                     RenameDeviceScreen(
-                        deviceId = it.toRoute<RenameDevice>().deviceId,
-                        onDismiss = {
+                        currentName = it.toRoute<RenameDevice>().currentName,
+                        onDismiss = { newName ->
+                            navController.previousBackStackEntry?.savedStateHandle?.set("newName", newName)
                             navController.navigateUp()
                         },
                     )

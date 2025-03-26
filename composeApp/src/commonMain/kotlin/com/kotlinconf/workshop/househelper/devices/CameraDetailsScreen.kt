@@ -48,11 +48,20 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun CameraDetailsScreen(
     deviceId: DeviceId,
+    newName: String?,
+    onNewNameProcessed: () -> Unit,
+    onNavigateToRename: (String) -> Unit,
     onNavigateUp: () -> Unit,
-    onNavigateToRename: (DeviceId) -> Unit,
     viewModel: CameraDetailsViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
     val device by viewModel.camera.collectAsStateWithLifecycle(null)
+
+    LaunchedEffect(newName) {
+        if (newName != null) {
+            viewModel.renameDevice(newName)
+            onNewNameProcessed()
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -65,7 +74,7 @@ fun CameraDetailsScreen(
                 },
                 actions = {
                     IconButton(
-                        onClick = { device?.deviceId?.let { onNavigateToRename(it) } }
+                        onClick = { device?.name?.let { onNavigateToRename(it) } }
                     ) {
                         Icon(Icons.Default.Edit, contentDescription = "Edit name")
                     }

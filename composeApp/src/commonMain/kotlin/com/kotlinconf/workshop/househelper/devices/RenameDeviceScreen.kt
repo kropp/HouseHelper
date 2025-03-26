@@ -23,31 +23,17 @@ import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.kotlinconf.workshop.househelper.DeviceId
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
 
 @Composable
 fun RenameDeviceScreen(
-    deviceId: DeviceId,
-    onDismiss: () -> Unit,
-    viewModel: RenameDeviceViewModel = koinViewModel { parametersOf(deviceId) },
+    currentName: String,
+    onDismiss: (newName: String?) -> Unit,
 ) {
-    val renamePerformed by viewModel.renamePerformed.collectAsStateWithLifecycle()
-    LaunchedEffect(renamePerformed) {
-        if (renamePerformed) {
-            onDismiss()
-        }
-    }
-
-    val currentName by viewModel.deviceName.collectAsStateWithLifecycle()
-    var textFieldValue by remember(currentName) {
-        val initialName = currentName ?: ""
+    var textFieldValue by remember {
         mutableStateOf(
             TextFieldValue(
-                text = initialName,
-                selection = TextRange(initialName.length)
+                text = currentName,
+                selection = TextRange(currentName.length)
             )
         )
     }
@@ -84,13 +70,12 @@ fun RenameDeviceScreen(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                TextButton(onClick = { onDismiss() }) {
+                TextButton(onClick = { onDismiss(null) }) {
                     Text("Cancel")
                 }
                 TextButton(
                     onClick = {
-                        viewModel.renameDevice(textFieldValue.text)
-                        onDismiss()
+                        onDismiss(textFieldValue.text)
                     }
                 ) {
                     Text("Rename")
