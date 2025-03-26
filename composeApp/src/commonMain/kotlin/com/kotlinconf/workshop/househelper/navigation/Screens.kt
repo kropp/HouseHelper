@@ -5,6 +5,9 @@ import kotlinx.serialization.Serializable
 
 // Start screens
 @Serializable
+data object Onboarding
+
+@Serializable
 data object OnboardingWelcome
 
 @Serializable
