@@ -46,7 +46,6 @@ import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kotlinconf.workshop.househelper.DeviceId
 import org.koin.compose.viewmodel.koinViewModel
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
 import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)

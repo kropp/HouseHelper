@@ -24,6 +24,7 @@ import com.kotlinconf.workshop.househelper.navigation.LightDetails
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
+import com.kotlinconf.workshop.househelper.navigation.RenameDevice
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_about_subtitle
@@ -112,7 +113,17 @@ fun App() {
                         deviceId = it.toRoute<CameraDetails>().deviceId,
                         onNavigateUp = { navController.navigateUp() },
                         onNavigateToRename = { deviceId ->
-                            // TODO Task 9: navigate to rename
+                            navController.navigate(RenameDevice(deviceId))
+                        },
+                    )
+                }
+                composable<RenameDevice>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                ) {
+                    RenameDeviceScreen(
+                        deviceId = it.toRoute<RenameDevice>().deviceId,
+                        onDismiss = {
+                            navController.navigateUp()
                         },
                     )
                 }

@@ -25,31 +25,30 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceId
 import org.koin.compose.viewmodel.koinViewModel
+import org.koin.core.parameter.parametersOf
 
 @Composable
 fun RenameDeviceScreen(
     deviceId: DeviceId,
-    currentName: String,
     onDismiss: () -> Unit,
-    viewModel: RenameDeviceViewModel = koinViewModel(),
+    viewModel: RenameDeviceViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
-    var textFieldValue by remember {
-        mutableStateOf(
-            TextFieldValue(
-                text = currentName,
-                selection = TextRange(currentName.length)
-            )
-        )
-    }
-    val focusRequester = remember { FocusRequester() }
-
-    LaunchedEffect(Unit) {
-        focusRequester.requestFocus()
-    }
-
     val renamePerformed by viewModel.renamePerformed.collectAsStateWithLifecycle()
     LaunchedEffect(renamePerformed) {
-        onDismiss()
+        if (renamePerformed) {
+            onDismiss()
+        }
+    }
+
+    val currentName by viewModel.deviceName.collectAsStateWithLifecycle()
+    var textFieldValue by remember(currentName) {
+        val initialName = currentName ?: ""
+        mutableStateOf(
+            TextFieldValue(
+                text = initialName,
+                selection = TextRange(initialName.length)
+            )
+        )
     }
 
     Column(
@@ -61,6 +60,11 @@ fun RenameDeviceScreen(
             text = "Rename Device",
             style = MaterialTheme.typography.headlineSmall
         )
+
+        val focusRequester = remember { FocusRequester() }
+        LaunchedEffect(Unit) {
+            focusRequester.requestFocus()
+        }
 
         OutlinedTextField(
             value = textFieldValue,
@@ -80,7 +84,7 @@ fun RenameDeviceScreen(
             }
             TextButton(
                 onClick = {
-                    viewModel.renameDevice(deviceId, textFieldValue.text)
+                    viewModel.renameDevice(textFieldValue.text)
                     onDismiss()
                 }
             ) {
