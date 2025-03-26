@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -124,14 +125,14 @@ internal fun RoomSection(
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            val rotation by animateFloatAsState(if (expanded) 0f else -90f)
             Icon(
                 imageVector = Icons.Default.KeyboardArrowDown,
                 contentDescription = null,
                 modifier = Modifier
                     .padding(end = 8.dp)
                     .graphicsLayer {
-                        // TODO Task 11: animate rotation
-                        rotationZ = if (expanded) 0f else -90f
+                        rotationZ = rotation
                     }
             )
             Text(
@@ -173,17 +174,14 @@ private fun DeviceCard(
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (device is LightDevice) {
+                val height by animateFloatAsState(
+                    if (!device.isOn) 0f
+                    else (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
+                )
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .fillMaxHeight(
-                            // TODO Task 11: animate height change
-                            if (!device.isOn) {
-                                0f
-                            } else {
-                                (device.brightness.toFloat() / DeviceConstants.Light.MAX_BRIGHTNESS)
-                            }
-                        )
+                        .fillMaxHeight(height)
                         .background(device.color.copy(alpha = 0.3f))
                         .align(Alignment.BottomCenter)
                 )
