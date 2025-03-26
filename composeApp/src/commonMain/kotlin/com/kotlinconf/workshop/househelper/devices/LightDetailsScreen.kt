@@ -76,6 +76,20 @@ fun LightDetailsScreen(
                         Icon(Icons.Default.ArrowBack, contentDescription = "Back")
                     }
                 },
+                actions = {
+                    @Suppress("DEPRECATION") // https://goomics.net/50
+                    val clipboardManager = LocalClipboardManager.current
+                    IconButton(
+                        onClick = {
+                            device?.deviceId?.let { deviceId ->
+                                val deeplinkUri = "househelper://light/${deviceId.value}"
+                                clipboardManager.setText(AnnotatedString(deeplinkUri))
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.device_action_share))
+                    }
+                },
             )
         }
     ) { paddingValues ->
