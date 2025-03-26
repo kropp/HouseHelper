@@ -21,6 +21,7 @@ import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -40,15 +41,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.input.pointer.PointerEventType
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.platform.LocalClipboardManager
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.LightDevice
+import househelper.composeapp.generated.resources.Res
+import househelper.composeapp.generated.resources.device_action_share
 import kotlinx.coroutines.delay
+import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -68,6 +74,20 @@ fun LightDetailsScreen(
                 navigationIcon = {
                     IconButton(onClick = onNavigateUp) {
                         Icon(Icons.AutoMirrored.Default.ArrowBack, contentDescription = "Back")
+                    }
+                },
+                actions = {
+                    @Suppress("DEPRECATION") // https://goomics.net/50
+                    val clipboardManager = LocalClipboardManager.current
+                    IconButton(
+                        onClick = {
+                            device?.deviceId?.let { deviceId ->
+                                val deeplinkUri = "househelper://light/${deviceId.value}"
+                                clipboardManager.setText(AnnotatedString(deeplinkUri))
+                            }
+                        }
+                    ) {
+                        Icon(Icons.Default.Share, contentDescription = stringResource(Res.string.device_action_share))
                     }
                 },
             )
