@@ -22,3 +22,6 @@ data object Settings
 
 @Serializable
 data class CameraDetails(val deviceId: DeviceId)
+
+@Serializable
+data class RenameDevice(val currentName: String)
