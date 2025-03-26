@@ -40,13 +40,12 @@ import androidx.compose.ui.graphics.ColorMatrix
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import coil3.compose.AsyncImage
 import coil3.compose.LocalPlatformContext
 import coil3.request.ImageRequest
 import coil3.request.crossfade
 import com.kotlinconf.workshop.househelper.DeviceId
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
+import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -55,8 +54,7 @@ fun CameraDetailsScreen(
     deviceId: DeviceId,
     onNavigateUp: () -> Unit,
     onNavigateToRename: (DeviceId) -> Unit,
-    // TODO Task 8: use Koin APIs
-    viewModel: CameraDetailsViewModel = viewModel { CameraDetailsViewModel(DemoHouseService(), deviceId) },
+    viewModel: CameraDetailsViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
     val device by viewModel.camera.collectAsStateWithLifecycle(null)
 
