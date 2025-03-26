@@ -47,7 +47,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
@@ -59,8 +58,8 @@ import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.SwitchDevice
 import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
 import com.kotlinconf.workshop.househelper.utils.onRightClick
+import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
 import org.jetbrains.compose.resources.painterResource
 import kotlin.math.roundToInt
 
@@ -75,9 +74,10 @@ fun RoomsContent(
         modifier = Modifier.fillMaxSize(),
     ) {
         items(rooms) { room ->
-            // TODO Task 8: use Metro APIs
-            val roomViewModel: RoomViewModel = viewModel(key = room.id.value) {
-                RoomViewModel(DemoHouseService(), room.id)
+            val roomViewModel = assistedMetroViewModel<RoomViewModel, RoomViewModel.Factory>(
+                key = room.id.value
+            ) {
+                create(room.id)
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
 
