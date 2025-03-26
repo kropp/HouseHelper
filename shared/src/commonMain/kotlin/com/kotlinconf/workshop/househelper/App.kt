@@ -20,6 +20,7 @@ import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSe
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.RenameDeviceScreen
 import com.kotlinconf.workshop.househelper.di.AppGraph
 import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
@@ -27,6 +28,7 @@ import com.kotlinconf.workshop.househelper.navigation.LightDetails
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
+import com.kotlinconf.workshop.househelper.navigation.RenameDevice
 import com.kotlinconf.workshop.househelper.navigation.Screen
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import househelper.shared.generated.resources.Res
@@ -125,7 +127,15 @@ fun App(appGraph: AppGraph) {
                                 deviceId = it.deviceId,
                                 onNavigateUp = { backStack.removeLastOrNull() },
                                 onNavigateToRename = { deviceId ->
-                                    // TODO Task 9: navigate to rename
+                                    backStack.add(RenameDevice(deviceId))
+                                },
+                            )
+                        }
+                        entry<RenameDevice> {
+                            RenameDeviceScreen(
+                                deviceId = it.deviceId,
+                                onDismiss = {
+                                    backStack.removeLastOrNull()
                                 },
                             )
                         }
