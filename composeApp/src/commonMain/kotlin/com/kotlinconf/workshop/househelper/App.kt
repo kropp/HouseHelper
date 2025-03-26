@@ -8,7 +8,10 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
@@ -35,6 +38,7 @@ import househelper.composeapp.generated.resources.onboarding_welcome_subtitle
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
+import kotlin.collections.set
 import kotlin.reflect.typeOf
 
 fun navigateToDeepLink(uri: String) {
@@ -99,20 +103,27 @@ fun App() {
                 }
                 composable<CameraDetails>(
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
+                ) { backstackEntry ->
+                    val results = remember(backstackEntry) {
+                        backstackEntry.savedStateHandle.getStateFlow<String?>("newName", null)
+                    }
+
+                    val newName by results.collectAsStateWithLifecycle()
                     CameraDetailsScreen(
-                        deviceId = it.toRoute<CameraDetails>().deviceId,
-                        onNavigateUp = { navController.navigateUp() },
+                        deviceId = backstackEntry.toRoute<CameraDetails>().deviceId,
+                        newName = newName,
+                        onNewNameProcessed = { backstackEntry.savedStateHandle["newName"] = null },
                         onNavigateToRename = { currentName ->
                             navController.navigate(RenameDevice(currentName))
                         },
+                        onNavigateUp = { navController.navigateUp() }
                     )
                 }
                 dialog<RenameDevice> {
                     RenameDeviceScreen(
                         currentName = it.toRoute<RenameDevice>().currentName,
                         onDismiss = { newName ->
-                            // TODO actually rename the device
+                            navController.previousBackStackEntry?.savedStateHandle?.set("newName", newName)
                             navController.navigateUp()
                         },
                     )

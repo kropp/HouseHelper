@@ -35,4 +35,10 @@ class CameraDetailsViewModel(
             houseService.toggle(deviceId)
         }
     }
+
+    fun renameDevice(newName: String) {
+        viewModelScope.launch {
+            houseService.rename(deviceId, newName)
+        }
+    }
 }

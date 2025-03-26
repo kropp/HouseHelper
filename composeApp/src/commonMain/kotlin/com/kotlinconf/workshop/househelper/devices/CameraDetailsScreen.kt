@@ -29,6 +29,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -52,11 +53,20 @@ import org.koin.core.parameter.parametersOf
 @Composable
 fun CameraDetailsScreen(
     deviceId: DeviceId,
-    onNavigateUp: () -> Unit,
+    newName: String?,
+    onNewNameProcessed: () -> Unit,
     onNavigateToRename: (String) -> Unit,
+    onNavigateUp: () -> Unit,
     viewModel: CameraDetailsViewModel = koinViewModel { parametersOf(deviceId) },
 ) {
     val device by viewModel.camera.collectAsStateWithLifecycle(null)
+
+    LaunchedEffect(newName) {
+        if (newName != null) {
+            viewModel.renameDevice(newName)
+            onNewNameProcessed()
+        }
+    }
 
     Scaffold(
         topBar = {
