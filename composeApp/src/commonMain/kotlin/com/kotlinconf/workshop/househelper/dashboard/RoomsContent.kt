@@ -48,8 +48,6 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.createSavedStateHandle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
@@ -61,7 +59,6 @@ import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.SwitchDevice
 import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
-import com.kotlinconf.workshop.househelper.data.DemoHouseService
 import com.kotlinconf.workshop.househelper.utils.onRightClick
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.dashboard_section_collapsed
@@ -83,8 +80,8 @@ fun RoomsContent(
         modifier = Modifier.fillMaxSize(),
     ) {
         items(rooms) { room ->
-            val roomViewModel: RoomViewModel = viewModel(key = room.id.value) {
-                RoomViewModel(DemoHouseService(), room.id, createSavedStateHandle())
+            val roomViewModel: RoomViewModel = koinViewModel(key = room.id.value) {
+                parametersOf(room.id)
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
             val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()

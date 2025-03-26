@@ -1,8 +1,10 @@
 package com.kotlinconf.workshop.househelper
 
 import com.kotlinconf.workshop.househelper.dashboard.DashboardViewModel
+import com.kotlinconf.workshop.househelper.dashboard.RoomViewModel
 import com.kotlinconf.workshop.househelper.data.DemoHouseService
 import com.kotlinconf.workshop.househelper.data.HouseService
+import com.kotlinconf.workshop.househelper.devices.CameraDetailsViewModel
 import com.kotlinconf.workshop.househelper.devices.LightDetailsViewModel
 import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.koinConfiguration
@@ -17,6 +19,8 @@ fun createKoinConfig() = koinConfiguration {
     val viewModelModule = module {
         viewModelOf(::DashboardViewModel)
         viewModelOf(::LightDetailsViewModel)
+        viewModelOf(::CameraDetailsViewModel)
+        viewModelOf(::RoomViewModel)
     }
 
     modules(appModule, viewModelModule)
