@@ -1,7 +1,7 @@
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.ui.test.*
-import com.kotlinconf.workshop.househelper.Onboarding
+import com.kotlinconf.workshop.househelper.OnboardingScreen
 import kotlin.test.Test
 import kotlin.test.assertTrue
 import org.jetbrains.compose.resources.ExperimentalResourceApi
@@ -15,7 +15,7 @@ class OnboardingTest {
 
         // Create test string resources
         setContent {
-            Onboarding(
+            OnboardingScreen(
                 text = "Welcome to Test",
                 subtitle = "This is a test subtitle",
                 buttonText = "Next",
