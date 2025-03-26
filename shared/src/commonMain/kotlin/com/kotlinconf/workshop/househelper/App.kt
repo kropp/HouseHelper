@@ -12,14 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -52,7 +47,6 @@ import househelper.shared.generated.resources.onboarding_next_button
 import househelper.shared.generated.resources.onboarding_welcome
 import househelper.shared.generated.resources.onboarding_welcome_subtitle
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.first
 import org.jetbrains.compose.resources.stringResource
 
 /**
