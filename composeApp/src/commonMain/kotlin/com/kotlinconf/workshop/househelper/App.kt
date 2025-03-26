@@ -81,7 +81,7 @@ fun App() {
             NavHost(navController, startDestination = StartScreens) {
                 navigation<StartScreens>(startDestination = Welcome) {
                     composable<Welcome> {
-                        Onboarding(
+                        OnboardingScreen(
                             text = stringResource(Res.string.onboarding_welcome),
                             subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
                             buttonText = stringResource(Res.string.onboarding_next_button),
@@ -90,7 +90,7 @@ fun App() {
                         )
                     }
                     composable<Onboarding> {
-                        Onboarding(
+                        OnboardingScreen(
                             text = stringResource(Res.string.onboarding_about),
                             subtitle = stringResource(Res.string.onboarding_about_subtitle),
                             buttonText = stringResource(Res.string.onboarding_next_button),
@@ -99,7 +99,7 @@ fun App() {
                         )
                     }
                     composable<OnboardingDone> {
-                        Onboarding(
+                        OnboardingScreen(
                             text = stringResource(Res.string.onboarding_done),
                             subtitle = stringResource(Res.string.onboarding_done_subtitle),
                             buttonText = stringResource(Res.string.onboarding_next_button),
