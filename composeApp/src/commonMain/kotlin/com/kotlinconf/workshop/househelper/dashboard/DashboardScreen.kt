@@ -1,5 +1,9 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -52,18 +56,26 @@ fun DashboardScreen(
             )
         }
 
-        // TODO Task 13: animate content changes
-        when (selectedTabIndex) {
-            0 -> {
-                val rooms by viewModel.rooms.collectAsStateWithLifecycle()
-                RoomsContent(
-                    rooms = rooms,
-                    onNavigateToLightDetails = onNavigateToLightDetails,
-                    onNavigateToCameraDetails = onNavigateToCameraDetails,
-                )
+        AnimatedContent(
+            targetState = selectedTabIndex,
+            transitionSpec = {
+                val direction = if (targetState > initialState) 1 else -1
+                slideInHorizontally { width -> direction * width } togetherWith
+                    slideOutHorizontally { width -> -direction * width }
             }
+        ) { tabIndex ->
+            when (tabIndex) {
+                0 -> {
+                    val rooms by viewModel.rooms.collectAsStateWithLifecycle()
+                    RoomsContent(
+                        rooms = rooms,
+                        onNavigateToLightDetails = onNavigateToLightDetails,
+                        onNavigateToCameraDetails = onNavigateToCameraDetails,
+                    )
+                }
 
-            1 -> SettingsContent()
+                1 -> SettingsContent()
+            }
         }
     }
 }
