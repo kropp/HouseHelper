@@ -18,6 +18,7 @@ import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navDeepLink
 import androidx.navigation.navOptions
@@ -30,6 +31,7 @@ import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
 import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
 import com.kotlinconf.workshop.househelper.navigation.LightDetails
+import com.kotlinconf.workshop.househelper.navigation.Onboarding
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
@@ -83,7 +85,7 @@ fun App() {
 
                     // Make sure we have a Dashboard
                     navController.navigate(Dashboard) {
-                        popUpTo<OnboardingWelcome> { inclusive = true }
+                        popUpTo<Onboarding> { inclusive = true }
                     }
 
                     // Go to deeplinked screen on top of Dashboard
@@ -96,39 +98,39 @@ fun App() {
                 }
             }
 
-            NavHost(navController, startDestination = OnboardingWelcome) {
-                composable<OnboardingWelcome> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_welcome),
-                        subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Favorite,
-                        onNext = { navController.navigate(OnboardingAbout) }
-                    )
-                }
-                composable<OnboardingAbout> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_about),
-                        subtitle = stringResource(Res.string.onboarding_about_subtitle),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Info,
-                        onNext = { navController.navigate(OnboardingDone) }
-                    )
-                }
-                composable<OnboardingDone> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_done),
-                        subtitle = stringResource(Res.string.onboarding_done_subtitle),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Home,
-                        onNext = {
-                            navController.navigate(Dashboard) {
-                                popUpTo<OnboardingWelcome> {
-                                    inclusive = true
+            NavHost(navController, startDestination = Onboarding) {
+                navigation<Onboarding>(startDestination = OnboardingWelcome) {
+                    composable<OnboardingWelcome> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_welcome),
+                            subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Favorite,
+                            onNext = { navController.navigate(OnboardingAbout) }
+                        )
+                    }
+                    composable<OnboardingAbout> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_about),
+                            subtitle = stringResource(Res.string.onboarding_about_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Info,
+                            onNext = { navController.navigate(OnboardingDone) }
+                        )
+                    }
+                    composable<OnboardingDone> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_done),
+                            subtitle = stringResource(Res.string.onboarding_done_subtitle),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Home,
+                            onNext = {
+                                navController.navigate(Dashboard) {
+                                    popUpTo<Onboarding>()
                                 }
                             }
-                        }
-                    )
+                        )
+                    }
                 }
                 composable<Dashboard> {
                     DashboardScreen(
