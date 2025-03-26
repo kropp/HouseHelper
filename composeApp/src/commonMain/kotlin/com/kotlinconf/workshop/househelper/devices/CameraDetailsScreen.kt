@@ -36,16 +36,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.ColorMatrix
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import coil3.compose.AsyncImage
-import coil3.compose.LocalPlatformContext
-import coil3.request.ImageRequest
-import coil3.request.crossfade
 import com.kotlinconf.workshop.househelper.DeviceId
+import com.kotlinconf.workshop.househelper.VideoPlayer
+import com.kotlinconf.workshop.househelper.rememberVideoPlayerState
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
 
@@ -127,22 +122,24 @@ fun CameraDetailsScreen(
                     )
                 }
 
-                val footageUrl by viewModel.cameraFootage.collectAsStateWithLifecycle()
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalPlatformContext.current)
-                        .data(footageUrl)
-                        .crossfade(true)
-                        .build(),
-                    contentDescription = "Camera image",
+                val videoPlayerState = rememberVideoPlayerState()
+
+                LaunchedEffect(camera.isOn) {
+                    if (camera.isOn) {
+                        videoPlayerState.play()
+                    } else {
+                        videoPlayerState.stop()
+                    }
+                }
+
+                VideoPlayer(
+                    url = "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
                     modifier = Modifier
                         .padding(horizontal = 16.dp)
                         .clip(MaterialTheme.shapes.medium)
                         .aspectRatio(16f / 9f)
                         .fillMaxWidth(),
-                    contentScale = ContentScale.Crop,
-                    colorFilter = ColorFilter.colorMatrix(
-                        ColorMatrix().apply { setToSaturation(0f) }
-                    ),
+                    videoPlayerState = videoPlayerState,
                 )
             }
         }
