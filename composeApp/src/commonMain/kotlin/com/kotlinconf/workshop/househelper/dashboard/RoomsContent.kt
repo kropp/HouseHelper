@@ -48,6 +48,7 @@ import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
@@ -83,7 +84,7 @@ fun RoomsContent(
     ) {
         items(rooms) { room ->
             val roomViewModel: RoomViewModel = viewModel(key = room.id.value) {
-                RoomViewModel(DemoHouseService(), room.id)
+                RoomViewModel(DemoHouseService(), room.id, createSavedStateHandle())
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
             val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()
