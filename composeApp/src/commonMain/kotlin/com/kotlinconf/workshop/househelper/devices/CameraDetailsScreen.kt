@@ -34,9 +34,10 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import com.kotlinconf.workshop.househelper.CameraDevice
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.kotlinconf.workshop.househelper.DeviceId
-import com.kotlinconf.workshop.househelper.RoomId
+import com.kotlinconf.workshop.househelper.data.DemoHouseService
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -44,8 +45,10 @@ fun CameraDetailsScreen(
     deviceId: DeviceId,
     onNavigateUp: () -> Unit,
     onNavigateToRename: (String) -> Unit,
+    viewModel: CameraDetailsViewModel = viewModel { CameraDetailsViewModel(DemoHouseService(), deviceId) },
 ) {
-    val device = CameraDevice(deviceId, "Fake Camera", roomId = RoomId(""))
+    val device by viewModel.camera.collectAsStateWithLifecycle(null)
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -75,7 +78,7 @@ fun CameraDetailsScreen(
             device?.let { camera ->
                 Switch(
                     checked = camera.isOn,
-                    onCheckedChange = { TODO("toggle") }
+                    onCheckedChange = { viewModel.toggleCamera() }
                 )
 
                 Row(verticalAlignment = Alignment.CenterVertically) {
