@@ -16,6 +16,7 @@ import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.RenameDeviceScreen
 import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
 import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
@@ -23,6 +24,7 @@ import com.kotlinconf.workshop.househelper.navigation.LightDetails
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
+import com.kotlinconf.workshop.househelper.navigation.RenameDevice
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_about_subtitle
@@ -112,7 +114,17 @@ fun App() {
                         deviceId = it.toRoute<CameraDetails>().deviceId,
                         onNavigateUp = { navController.navigateUp() },
                         onNavigateToRename = { deviceId ->
-                            // TODO Task 9: navigate to rename
+                            navController.navigate(RenameDevice(deviceId))
+                        },
+                    )
+                }
+                composable<RenameDevice>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
+                ) {
+                    RenameDeviceScreen(
+                        deviceId = it.toRoute<RenameDevice>().deviceId,
+                        onDismiss = {
+                            navController.navigateUp()
                         },
                     )
                 }

@@ -23,4 +23,5 @@ data class LightDetails(val deviceId: DeviceId)
 @Serializable
 data class CameraDetails(val deviceId: DeviceId)
 
-// TODO Task 9: add new navigation class
+@Serializable
+data class RenameDevice(val deviceId: DeviceId)
