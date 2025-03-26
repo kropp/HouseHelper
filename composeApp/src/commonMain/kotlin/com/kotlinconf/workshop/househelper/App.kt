@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -26,6 +27,9 @@ import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
 import com.kotlinconf.workshop.househelper.navigation.RenameDevice
+import com.kotlinconf.workshop.househelper.theme.AppDarkColorScheme
+import com.kotlinconf.workshop.househelper.theme.AppLightColorScheme
+import com.kotlinconf.workshop.househelper.theme.AppShapes
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_about_subtitle
@@ -48,8 +52,14 @@ private val deepLinkUris = Channel<String>(capacity = 1)
 @Composable
 @Preview
 fun App() {
-    // TODO Task 14: customize theme
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = if (isSystemInDarkTheme()) {
+            AppDarkColorScheme
+        } else {
+            AppLightColorScheme
+        },
+        shapes = AppShapes,
+    ) {
         Surface(
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
