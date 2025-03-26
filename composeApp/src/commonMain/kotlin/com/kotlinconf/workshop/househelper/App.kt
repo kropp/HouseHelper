@@ -19,10 +19,12 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
+import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.RenameDeviceScreen
 import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
 import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
+import com.kotlinconf.workshop.househelper.navigation.LightDetails
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
@@ -94,11 +96,19 @@ fun App() {
                 composable<Dashboard> {
                     DashboardScreen(
                         onNavigateToLightDetails = { deviceId ->
-                            // TODO
+                            navController.navigate(LightDetails(deviceId))
                         },
                         onNavigateToCameraDetails = { deviceId ->
                             navController.navigate(CameraDetails(deviceId))
                         }
+                    )
+                }
+                composable<LightDetails>(
+                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType),
+                ) {
+                    LightDetailsScreen(
+                        deviceId = it.toRoute<LightDetails>().deviceId,
+                        onNavigateUp = { navController.navigateUp() },
                     )
                 }
                 composable<CameraDetails>(

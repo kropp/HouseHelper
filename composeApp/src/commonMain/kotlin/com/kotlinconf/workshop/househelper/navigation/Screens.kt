@@ -21,6 +21,9 @@ data object Dashboard
 data object Settings
 
 @Serializable
+data class LightDetails(val deviceId: DeviceId)
+
+@Serializable
 data class CameraDetails(val deviceId: DeviceId)
 
 @Serializable
