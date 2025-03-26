@@ -59,6 +59,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.createSavedStateHandle
 import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.Device
 import com.kotlinconf.workshop.househelper.DeviceConstants
@@ -92,8 +93,8 @@ fun RoomsContent(
         items(rooms) { room ->
             val roomViewModel = assistedMetroViewModel<RoomViewModel, RoomViewModel.Factory>(
                 key = room.id.value
-            ) {
-                create(room.id)
+            ) { extras ->
+                create(room.id, extras.createSavedStateHandle())
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
             val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()

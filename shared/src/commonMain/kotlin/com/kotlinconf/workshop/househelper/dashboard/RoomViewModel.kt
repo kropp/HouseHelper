@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
+import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kotlinconf.workshop.househelper.Device
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 class RoomViewModel(
     private val houseService: HouseService,
     @Assisted private val roomId: RoomId,
+    @Assisted private val savedStateHandle: SavedStateHandle,
 ) : ViewModel() {
 
     val devices: StateFlow<List<Device>> = houseService
@@ -39,7 +41,7 @@ class RoomViewModel(
         }
     }
 
-    private val _expanded = MutableStateFlow(true)
+    private val _expanded = savedStateHandle.getMutableStateFlow("expanded", true)
     val expanded = _expanded.asStateFlow()
 
     fun expand(isExpanded: Boolean) {
@@ -50,6 +52,6 @@ class RoomViewModel(
     @ManualViewModelAssistedFactoryKey(Factory::class)
     @ContributesIntoMap(AppScope::class)
     fun interface Factory : ManualViewModelAssistedFactory {
-        fun create(roomId: RoomId): RoomViewModel
+        fun create(roomId: RoomId, savedStateHandle: SavedStateHandle): RoomViewModel
     }
 }
