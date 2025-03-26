@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper
 
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
@@ -32,6 +33,9 @@ import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
 import com.kotlinconf.workshop.househelper.navigation.RenameDevice
 import com.kotlinconf.workshop.househelper.navigation.Screen
+import com.kotlinconf.workshop.househelper.theme.AppDarkColorScheme
+import com.kotlinconf.workshop.househelper.theme.AppLightColorScheme
+import com.kotlinconf.workshop.househelper.theme.AppShapes
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import househelper.shared.generated.resources.Res
 import househelper.shared.generated.resources.onboarding_about
@@ -61,8 +65,14 @@ private val deeplinkRequests = Channel<Screen>(capacity = 1)
 
 @Composable
 fun App(appGraph: AppGraph) {
-    // TODO Task 14: customize theme
-    MaterialTheme {
+    MaterialTheme(
+        colorScheme = if (isSystemInDarkTheme()) {
+            AppDarkColorScheme
+        } else {
+            AppLightColorScheme
+        },
+        shapes = AppShapes,
+    ) {
         CompositionLocalProvider(LocalMetroViewModelFactory provides appGraph.metroViewModelFactory) {
             Surface(
                 modifier = Modifier.fillMaxSize(),
