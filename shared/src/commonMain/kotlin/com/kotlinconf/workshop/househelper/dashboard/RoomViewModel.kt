@@ -12,8 +12,10 @@ import dev.zacsweers.metro.AssistedInject
 import dev.zacsweers.metro.ContributesIntoMap
 import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactory
 import dev.zacsweers.metrox.viewmodel.ManualViewModelAssistedFactoryKey
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
@@ -37,6 +39,12 @@ class RoomViewModel(
         }
     }
 
+    private val _expanded = MutableStateFlow(true)
+    val expanded = _expanded.asStateFlow()
+
+    fun expand(isExpanded: Boolean) {
+        _expanded.value = isExpanded
+    }
 
     @AssistedFactory
     @ManualViewModelAssistedFactoryKey(Factory::class)
