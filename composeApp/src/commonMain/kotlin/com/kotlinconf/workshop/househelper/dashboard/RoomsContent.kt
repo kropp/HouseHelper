@@ -42,7 +42,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -96,15 +95,14 @@ fun RoomsContent(
                 parametersOf(room.id)
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
-
-            var expanded by rememberSaveable { mutableStateOf(true) }
+            val expanded by roomViewModel.expanded.collectAsStateWithLifecycle()
 
             RoomSection(
                 room = room,
                 expanded = expanded,
                 devices = devices,
                 onExpand = { isExpanded ->
-                    expanded = isExpanded
+                    roomViewModel.expand(isExpanded)
                 },
                 onClick = { device -> roomViewModel.onDeviceClicked(device) },
                 onLongClick = { device ->
