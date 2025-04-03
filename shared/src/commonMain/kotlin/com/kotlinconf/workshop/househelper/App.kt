@@ -31,9 +31,12 @@ import com.kotlinconf.workshop.househelper.navigation.Screen
 import dev.zacsweers.metrox.viewmodel.LocalMetroViewModelFactory
 import househelper.shared.generated.resources.Res
 import househelper.shared.generated.resources.onboarding_about
+import househelper.shared.generated.resources.onboarding_about_subtitle
 import househelper.shared.generated.resources.onboarding_done
+import househelper.shared.generated.resources.onboarding_done_subtitle
 import househelper.shared.generated.resources.onboarding_next_button
 import househelper.shared.generated.resources.onboarding_welcome
+import househelper.shared.generated.resources.onboarding_welcome_subtitle
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.compose.resources.stringResource
 
@@ -74,6 +77,7 @@ fun App(appGraph: AppGraph) {
                         entry<OnboardingWelcome> {
                             OnboardingScreen(
                                 text = stringResource(Res.string.onboarding_welcome),
+                                subtitle = stringResource(Res.string.onboarding_welcome_subtitle),
                                 buttonText = stringResource(Res.string.onboarding_next_button),
                                 icon = Icons.Default.Favorite,
                                 onNext = { backStack.add(OnboardingAbout) }
@@ -82,6 +86,7 @@ fun App(appGraph: AppGraph) {
                         entry<OnboardingAbout> {
                             OnboardingScreen(
                                 text = stringResource(Res.string.onboarding_about),
+                                subtitle = stringResource(Res.string.onboarding_about_subtitle),
                                 buttonText = stringResource(Res.string.onboarding_next_button),
                                 icon = Icons.Default.Info,
                                 onNext = { backStack.add(OnboardingDone) }
@@ -90,6 +95,7 @@ fun App(appGraph: AppGraph) {
                         entry<OnboardingDone> {
                             OnboardingScreen(
                                 text = stringResource(Res.string.onboarding_done),
+                                subtitle = stringResource(Res.string.onboarding_done_subtitle),
                                 buttonText = stringResource(Res.string.onboarding_next_button),
                                 icon = Icons.Default.Home,
                                 onNext = {
