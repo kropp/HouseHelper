@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun OnboardingScreen(
     text: String,
+    subtitle: String,
     buttonText: String,
     icon: ImageVector,
     onNext: () -> Unit,
@@ -88,7 +89,14 @@ fun OnboardingScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
 
-                     // TODO Task 4: add subtitle
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Text(
+                        text = subtitle,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.padding(horizontal = 16.dp),
+                    )
                 }
             }
         }
