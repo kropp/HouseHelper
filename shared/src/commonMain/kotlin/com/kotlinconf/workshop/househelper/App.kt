@@ -10,11 +10,13 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.scene.DialogSceneStrategy
 import androidx.navigation3.ui.NavDisplay
 import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
@@ -69,12 +71,14 @@ fun App(appGraph: AppGraph) {
                 val backStack = rememberSerializable(serializer = SnapshotStateListSerializer()) {
                     mutableStateListOf<Screen>(OnboardingWelcome)
                 }
+                val dialogStrategy = remember { DialogSceneStrategy<Screen>() }
 
                 // TODO Bonus Task 3: receive and handle deep link requests
 
                 NavDisplay(
                     backStack = backStack,
                     onBack = { backStack.removeLastOrNull() },
+                    sceneStrategies = listOf(dialogStrategy),
                     entryProvider = entryProvider {
                         entry<OnboardingWelcome> {
                             OnboardingScreen(
@@ -131,7 +135,9 @@ fun App(appGraph: AppGraph) {
                                 },
                             )
                         }
-                        entry<RenameDevice> {
+                        entry<RenameDevice>(
+                            metadata = DialogSceneStrategy.dialog()
+                        ) {
                             RenameDeviceScreen(
                                 deviceId = it.deviceId,
                                 onDismiss = {
