@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -42,38 +43,43 @@ fun RenameDeviceScreen(
         focusRequester.requestFocus()
     }
 
-    Column(
-        modifier = Modifier.padding(16.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(16.dp)
+    Surface(
+        color = MaterialTheme.colorScheme.surface,
+        shape = MaterialTheme.shapes.extraLarge
     ) {
-        Text(
-            text = "Rename Device",
-            style = MaterialTheme.typography.headlineSmall
-        )
-
-        OutlinedTextField(
-            value = textFieldValue,
-            onValueChange = { textFieldValue = it },
-            label = { Text("Name") },
-            singleLine = true,
-            modifier = Modifier.focusRequester(focusRequester)
-        )
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.End,
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier.padding(16.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            TextButton(onClick = { onDismiss(null) }) {
-                Text("Cancel")
-            }
-            TextButton(
-                onClick = {
-                    onDismiss(textFieldValue.text)
-                }
+            Text(
+                text = "Rename Device",
+                style = MaterialTheme.typography.headlineSmall
+            )
+
+            OutlinedTextField(
+                value = textFieldValue,
+                onValueChange = { textFieldValue = it },
+                label = { Text("Name") },
+                singleLine = true,
+                modifier = Modifier.focusRequester(focusRequester)
+            )
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                Text("Rename")
+                TextButton(onClick = { onDismiss(null) }) {
+                    Text("Cancel")
+                }
+                TextButton(
+                    onClick = {
+                        onDismiss(textFieldValue.text)
+                    }
+                ) {
+                    Text("Rename")
+                }
             }
         }
     }
