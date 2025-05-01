@@ -8,6 +8,7 @@ import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +16,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
@@ -66,15 +66,19 @@ fun OnboardingScreen(
                 elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             ) {
                 Column(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(16.dp),
                     verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     Icon(
                         imageVector = icon,
                         contentDescription = null,
-                        modifier = Modifier.size(300.dp),
+                        modifier = Modifier.size(96.dp),
                         tint = MaterialTheme.colorScheme.primary
                     )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
                     Text(
                         text = text,
                         style = MaterialTheme.typography.headlineMedium,
@@ -92,8 +96,7 @@ fun OnboardingScreen(
             },
             modifier = Modifier
                 .align(Alignment.BottomCenter)
-                .width(200.dp)
-                .height(150.dp)
+                .fillMaxWidth(0.7f)
                 .padding(24.dp),
             shape = MaterialTheme.shapes.medium
         ) {
