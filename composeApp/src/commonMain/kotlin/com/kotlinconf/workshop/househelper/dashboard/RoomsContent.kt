@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -31,6 +30,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.selection.toggleable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.Card
@@ -50,8 +50,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.semantics.toggleableState
 import androidx.compose.ui.state.ToggleableState
 import androidx.compose.ui.text.style.TextAlign
@@ -69,7 +71,11 @@ import com.kotlinconf.workshop.househelper.SwitchDevice
 import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
 import com.kotlinconf.workshop.househelper.utils.onRightClick
+import househelper.composeapp.generated.resources.Res
+import househelper.composeapp.generated.resources.dashboard_section_collapsed
+import househelper.composeapp.generated.resources.dashboard_section_expanded
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import org.koin.compose.viewmodel.koinViewModel
 import org.koin.core.parameter.parametersOf
@@ -128,10 +134,22 @@ internal fun RoomSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
+        val stateDesc = stringResource(
+            if (expanded) Res.string.dashboard_section_expanded
+            else Res.string.dashboard_section_collapsed
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onExpand(!expanded) } // TODO Task 17: improve accessibility
+                .toggleable(
+                    value = expanded,
+                    onValueChange = onExpand,
+                )
+                .semantics {
+                    stateDescription = stateDesc
+                    heading()
+                }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -305,7 +323,7 @@ private fun DeviceCardContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .semantics { // TODO Task 17: merge semantics here
+            .semantics(mergeDescendants = true) {
                 if (device is Toggleable) {
                     role = Role.Switch
                     toggleableState = ToggleableState(device.isOn)
