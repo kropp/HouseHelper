@@ -8,7 +8,6 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -125,10 +124,22 @@ internal fun RoomSection(
     Column(
         modifier = Modifier.fillMaxWidth(),
     ) {
+        val stateDesc = stringResource(
+            if (expanded) Res.string.dashboard_section_expanded
+            else Res.string.dashboard_section_collapsed
+        )
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .clickable { onExpand(!expanded) }
+                .toggleable(
+                    value = expanded,
+                    onValueChange = onExpand,
+                )
+                .semantics {
+                    stateDescription = stateDesc
+                    heading()
+                }
                 .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
@@ -300,7 +311,7 @@ private fun DeviceCardContent(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .semantics {
+            .semantics(mergeDescendants = true) {
                 if (device is Toggleable) {
                     role = Role.Switch
                     toggleableState = ToggleableState(device.isOn)
