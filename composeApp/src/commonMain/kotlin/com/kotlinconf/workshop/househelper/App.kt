@@ -9,11 +9,18 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavUri
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navDeepLink
+import androidx.navigation.navOptions
 import androidx.navigation.toRoute
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
@@ -39,6 +46,7 @@ import househelper.composeapp.generated.resources.onboarding_next_button
 import househelper.composeapp.generated.resources.onboarding_welcome
 import househelper.composeapp.generated.resources.onboarding_welcome_subtitle
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.ui.tooling.preview.Preview
 import kotlin.reflect.typeOf
@@ -65,6 +73,28 @@ fun App() {
             color = MaterialTheme.colorScheme.background
         ) {
             val navController = rememberNavController()
+
+            LaunchedEffect(Unit) {
+                while (true) {
+                    val uri = deepLinkUris.receive()
+
+                    // Make sure navController has had time to initialize
+                    navController.currentBackStackEntryFlow.first()
+
+                    // Make sure we have a Dashboard
+                    navController.navigate(Dashboard) {
+                        popUpTo<OnboardingWelcome> { inclusive = true }
+                    }
+
+                    // Go to deeplinked screen on top of Dashboard
+                    navController.navigate(
+                        deepLink = NavUri(uri),
+                        navOptions = navOptions {
+                            popUpTo<Dashboard>()
+                        },
+                    )
+                }
+            }
 
             NavHost(navController, startDestination = OnboardingWelcome) {
                 composable<OnboardingWelcome> {
@@ -112,6 +142,11 @@ fun App() {
                 }
                 composable<LightDetails>(
                     typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType),
+                    deepLinks = listOf(
+                        navDeepLink {
+                            uriPattern = "househelper://light/{deviceId}"
+                        }
+                    ),
                 ) {
                     LightDetailsScreen(
                         deviceId = it.toRoute<LightDetails>().deviceId,
