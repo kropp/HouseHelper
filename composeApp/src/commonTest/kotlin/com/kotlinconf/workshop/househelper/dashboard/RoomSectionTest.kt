@@ -1,5 +1,6 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
+import androidx.compose.runtime.*
 import androidx.compose.ui.test.*
 import com.kotlinconf.workshop.househelper.*
 import kotlin.test.*
@@ -32,21 +33,36 @@ class RoomSectionTest {
 
     @Test
     fun testRoomSectionExpansion() = runComposeUiTest {
+        var expanded by mutableStateOf(false)
+
         setContent {
             RoomSection(
                 room = testRoom,
-                expanded = false,
+                expanded = expanded,
                 devices = listOf(testLight, testThermostat),
-                onExpand = {},
+                onExpand = { expanded = it },
                 onClick = {},
                 onLongClick = {}
             )
         }
 
         // Initially collapsed
+        onNode(hasText("Test Light")).assertDoesNotExist()
+
         // Click on the room header to expand
+        onNode(hasText("Test Room")).performClick()
+        assertTrue(expanded)
+
         // Verify devices are now visible
+        onNode(hasText("Test Light")).assertExists()
+        onNode(hasText("Test Thermostat")).assertExists()
+
         // Click again to collapse
+        onNode(hasText("Test Room")).performClick()
+        assertFalse(expanded)
+
         // Verify devices are hidden again
+        onNode(hasText("Test Light")).assertDoesNotExist()
+        onNode(hasText("Test Thermostat")).assertDoesNotExist()
     }
 }
