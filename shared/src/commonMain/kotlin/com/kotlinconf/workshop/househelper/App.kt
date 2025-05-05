@@ -10,10 +10,16 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
@@ -46,6 +52,7 @@ import househelper.shared.generated.resources.onboarding_next_button
 import househelper.shared.generated.resources.onboarding_welcome
 import househelper.shared.generated.resources.onboarding_welcome_subtitle
 import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.first
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -58,7 +65,11 @@ import org.jetbrains.compose.resources.stringResource
 fun navigateToDeepLink(uri: String) {
     if (!uri.startsWith("househelper://")) return
 
-    // TODO Bonus Task 3: parse deep links
+    val path = uri.substringAfter("househelper://")
+    val (type, id) = path.split("/")
+    when (type) {
+        "light" -> deeplinkRequests.trySend(LightDetails(DeviceId(id)))
+    }
 }
 
 private val deeplinkRequests = Channel<Screen>(capacity = 1)
@@ -83,7 +94,20 @@ fun App(appGraph: AppGraph) {
                 }
                 val dialogStrategy = remember { DialogSceneStrategy<Screen>() }
 
-                // TODO Bonus Task 3: receive and handle deep link requests
+                LaunchedEffect(Unit) {
+                    while (true) {
+                        val screen = deeplinkRequests.receive()
+
+                        // Make sure we're not in the onboarding screens anymore
+                        if (!backStack.contains(Dashboard)) {
+                            backStack.clear()
+                            backStack.add(Dashboard)
+                        }
+
+                        // Navigate to the given device
+                        backStack.add(screen)
+                    }
+                }
 
                 NavDisplay(
                     backStack = backStack,
