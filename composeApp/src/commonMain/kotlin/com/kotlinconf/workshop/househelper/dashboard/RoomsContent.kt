@@ -80,15 +80,14 @@ fun RoomsContent(
             }
             val devices by roomViewModel.devices.collectAsStateWithLifecycle()
 
-            // TODO Task 3: introduce proper state for expanding sections
-            var expanded = true
+            var expanded by remember { mutableStateOf(true) }
 
             RoomSection(
                 room = room,
                 expanded = expanded,
                 devices = devices,
                 onExpand = { isExpanded ->
-                    // TODO Task 3: update expanded state here
+                    expanded = isExpanded
                 },
                 onClick = { device -> roomViewModel.onDeviceClicked(device) },
                 onLongClick = { device ->
