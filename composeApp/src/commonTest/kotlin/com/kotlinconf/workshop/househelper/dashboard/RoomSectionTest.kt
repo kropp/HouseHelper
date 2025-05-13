@@ -46,12 +46,23 @@ class RoomSectionTest {
             )
         }
 
-        // TODO Task 18: implement test
-
         // Initially collapsed
+        onNode(hasText("Test Light")).assertDoesNotExist()
+
         // Click on the room header to expand
+        onNode(hasText("Test Room")).performClick()
+        assertTrue(expanded)
+
         // Verify devices are now visible
+        onNode(hasText("Test Light")).assertExists()
+        onNode(hasText("Test Thermostat")).assertExists()
+
         // Click again to collapse
+        onNode(hasText("Test Room")).performClick()
+        assertFalse(expanded)
+
         // Verify devices are hidden again
+        onNode(hasText("Test Light")).assertDoesNotExist()
+        onNode(hasText("Test Thermostat")).assertDoesNotExist()
     }
 }
