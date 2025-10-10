@@ -9,7 +9,7 @@ import org.koin.core.context.startKoin
 fun main() {
     startKoin(createKoinConfig())
 
-    ComposeViewport(document.body!!) {
+    ComposeViewport {
         App()
     }
 }
