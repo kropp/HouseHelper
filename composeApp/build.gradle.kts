@@ -119,7 +119,7 @@ kotlin {
 
             // JavaFx for video player
             libs.bundles.javafx.get().forEach {
-                implementation(it) { artifact { classifier = javaFxClassifier } }
+                api(it) { artifact { classifier = javaFxClassifier } }
             }
         }
         iosMain.dependencies {
@@ -130,15 +130,4 @@ kotlin {
 
 dependencies {
     androidRuntimeClasspath(libs.compose.ui.tooling)
-}
-
-compose.desktop {
-    application {
-        mainClass = "com.kotlinconf.workshop.househelper.MainKt"
-    }
-}
-
-// Hot reload support
-composeCompiler {
-    featureFlags.add(ComposeFeatureFlag.OptimizeNonSkippingGroups)
 }

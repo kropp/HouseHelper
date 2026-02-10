@@ -21,7 +21,7 @@ run_app_with_timeout() {
     echo "Running application..."
 
     # Run the application in the background and capture its PID
-    ./gradlew desktopRun -DmainClass=com.kotlinconf.workshop.househelper.MainKt --quiet &
+    ./gradlew :desktopApp:run -DmainClass=com.kotlinconf.workshop.househelper.MainKt --quiet &
     APP_PID=$!
 
     # Flag to track if the application started successfully
