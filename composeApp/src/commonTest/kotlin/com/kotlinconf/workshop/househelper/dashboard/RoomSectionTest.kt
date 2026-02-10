@@ -1,9 +1,20 @@
 package com.kotlinconf.workshop.househelper.dashboard
 
-import androidx.compose.runtime.*
-import androidx.compose.ui.test.*
-import com.kotlinconf.workshop.househelper.*
-import kotlin.test.*
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.test.ExperimentalTestApi
+import androidx.compose.ui.test.hasText
+import androidx.compose.ui.test.performClick
+import androidx.compose.ui.test.v2.runComposeUiTest
+import com.kotlinconf.workshop.househelper.DeviceId
+import com.kotlinconf.workshop.househelper.LightDevice
+import com.kotlinconf.workshop.househelper.Room
+import com.kotlinconf.workshop.househelper.RoomId
+import com.kotlinconf.workshop.househelper.ThermostatDevice
+import kotlin.test.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 @OptIn(ExperimentalTestApi::class)
 class RoomSectionTest {
