@@ -8,22 +8,25 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.saveable.rememberSerializable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.toRoute
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
+import androidx.navigation3.runtime.entryProvider
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
+import androidx.navigation3.ui.NavDisplay
+import androidx.savedstate.compose.serialization.serializers.SnapshotStateListSerializer
 import com.kotlinconf.workshop.househelper.dashboard.DashboardScreen
 import com.kotlinconf.workshop.househelper.devices.CameraDetailsScreen
 import com.kotlinconf.workshop.househelper.devices.LightDetailsScreen
 import com.kotlinconf.workshop.househelper.navigation.CameraDetails
 import com.kotlinconf.workshop.househelper.navigation.Dashboard
-import com.kotlinconf.workshop.househelper.navigation.DeviceIdNavType
 import com.kotlinconf.workshop.househelper.navigation.LightDetails
 import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
+import com.kotlinconf.workshop.househelper.navigation.Screen
 import househelper.composeapp.generated.resources.Res
 import househelper.composeapp.generated.resources.onboarding_about
 import househelper.composeapp.generated.resources.onboarding_done
@@ -31,7 +34,6 @@ import househelper.composeapp.generated.resources.onboarding_next_button
 import househelper.composeapp.generated.resources.onboarding_welcome
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.compose.resources.stringResource
-import kotlin.reflect.typeOf
 
 fun navigateToDeepLink(uri: String) {
     deepLinkUris.trySend(uri)
@@ -48,69 +50,72 @@ fun App() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background
         ) {
-            val navController = rememberNavController()
-
-            NavHost(navController, startDestination = OnboardingWelcome) {
-                composable<OnboardingWelcome> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_welcome),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Favorite,
-                        onNext = { navController.navigate(OnboardingAbout) }
-                    )
-                }
-                composable<OnboardingAbout> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_about),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Info,
-                        onNext = { navController.navigate(OnboardingDone) }
-                    )
-                }
-                composable<OnboardingDone> {
-                    OnboardingScreen(
-                        text = stringResource(Res.string.onboarding_done),
-                        buttonText = stringResource(Res.string.onboarding_next_button),
-                        icon = Icons.Default.Home,
-                        onNext = {
-                            navController.navigate(Dashboard) {
-                                popUpTo<OnboardingWelcome> {
-                                    inclusive = true
-                                }
-                            }
-                        }
-                    )
-                }
-                composable<Dashboard> {
-                    DashboardScreen(
-                        onNavigateToLightDetails = { deviceId ->
-                            navController.navigate(LightDetails(deviceId))
-                        },
-                        onNavigateToCameraDetails = { deviceId ->
-                            navController.navigate(CameraDetails(deviceId))
-                        }
-                    )
-                }
-                composable<LightDetails>(
-                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType),
-                ) {
-                    LightDetailsScreen(
-                        deviceId = it.toRoute<LightDetails>().deviceId,
-                        onNavigateUp = { navController.navigateUp() },
-                    )
-                }
-                composable<CameraDetails>(
-                    typeMap = mapOf(typeOf<DeviceId>() to DeviceIdNavType)
-                ) {
-                    CameraDetailsScreen(
-                        deviceId = it.toRoute<CameraDetails>().deviceId,
-                        onNavigateUp = { navController.navigateUp() },
-                        onNavigateToRename = { deviceId ->
-                            // TODO Task 9: navigate to rename
-                        },
-                    )
-                }
+            val backStack = rememberSerializable(serializer = SnapshotStateListSerializer()) {
+                mutableStateListOf<Screen>(OnboardingWelcome)
             }
+
+            NavDisplay(
+                backStack = backStack,
+                onBack = { backStack.removeLastOrNull() },
+                entryProvider = entryProvider {
+                    entry<OnboardingWelcome> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_welcome),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Favorite,
+                            onNext = { backStack.add(OnboardingAbout) }
+                        )
+                    }
+                    entry<OnboardingAbout> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_about),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Info,
+                            onNext = { backStack.add(OnboardingDone) }
+                        )
+                    }
+                    entry<OnboardingDone> {
+                        OnboardingScreen(
+                            text = stringResource(Res.string.onboarding_done),
+                            buttonText = stringResource(Res.string.onboarding_next_button),
+                            icon = Icons.Default.Home,
+                            onNext = {
+                                backStack.clear()
+                                backStack.add(Dashboard)
+                            }
+                        )
+                    }
+                    entry<Dashboard> {
+                        DashboardScreen(
+                            onNavigateToLightDetails = { deviceId ->
+                                backStack.add(LightDetails(deviceId))
+                            },
+                            onNavigateToCameraDetails = { deviceId ->
+                                backStack.add(CameraDetails(deviceId))
+                            }
+                        )
+                    }
+                    entry<LightDetails> {
+                        LightDetailsScreen(
+                            deviceId = it.deviceId,
+                            onNavigateUp = { backStack.removeLastOrNull() },
+                        )
+                    }
+                    entry<CameraDetails> {
+                        CameraDetailsScreen(
+                            deviceId = it.deviceId,
+                            onNavigateUp = { backStack.removeLastOrNull() },
+                            onNavigateToRename = { deviceId ->
+                                // TODO Task 9: navigate to rename
+                            },
+                        )
+                    }
+                },
+                entryDecorators = listOf(
+                    rememberSaveableStateHolderNavEntryDecorator(),
+                    rememberViewModelStoreNavEntryDecorator(),
+                ),
+            )
         }
     }
 }
