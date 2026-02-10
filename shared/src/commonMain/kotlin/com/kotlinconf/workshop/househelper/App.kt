@@ -27,11 +27,11 @@ import com.kotlinconf.workshop.househelper.navigation.OnboardingAbout
 import com.kotlinconf.workshop.househelper.navigation.OnboardingDone
 import com.kotlinconf.workshop.househelper.navigation.OnboardingWelcome
 import com.kotlinconf.workshop.househelper.navigation.Screen
-import househelper.composeapp.generated.resources.Res
-import househelper.composeapp.generated.resources.onboarding_about
-import househelper.composeapp.generated.resources.onboarding_done
-import househelper.composeapp.generated.resources.onboarding_next_button
-import househelper.composeapp.generated.resources.onboarding_welcome
+import househelper.shared.generated.resources.Res
+import househelper.shared.generated.resources.onboarding_about
+import househelper.shared.generated.resources.onboarding_done
+import househelper.shared.generated.resources.onboarding_next_button
+import househelper.shared.generated.resources.onboarding_welcome
 import kotlinx.coroutines.channels.Channel
 import org.jetbrains.compose.resources.stringResource
 

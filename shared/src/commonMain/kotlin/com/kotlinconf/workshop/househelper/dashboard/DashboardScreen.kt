@@ -17,9 +17,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceId
-import househelper.composeapp.generated.resources.Res
-import househelper.composeapp.generated.resources.dashboard_tab_rooms
-import househelper.composeapp.generated.resources.dashboard_tab_settings
+import househelper.shared.generated.resources.Res
+import househelper.shared.generated.resources.dashboard_tab_rooms
+import househelper.shared.generated.resources.dashboard_tab_settings
 import org.jetbrains.compose.resources.stringResource
 import org.koin.compose.viewmodel.koinViewModel
 
