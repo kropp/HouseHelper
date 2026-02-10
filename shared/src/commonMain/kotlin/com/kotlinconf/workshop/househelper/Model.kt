@@ -1,12 +1,12 @@
 package com.kotlinconf.workshop.househelper
 
 import androidx.compose.ui.graphics.Color
-import househelper.composeapp.generated.resources.Res
-import househelper.composeapp.generated.resources.camera
-import househelper.composeapp.generated.resources.humidity
-import househelper.composeapp.generated.resources.lightbulb
-import househelper.composeapp.generated.resources.switch
-import househelper.composeapp.generated.resources.thermostat
+import househelper.shared.generated.resources.Res
+import househelper.shared.generated.resources.camera
+import househelper.shared.generated.resources.humidity
+import househelper.shared.generated.resources.lightbulb
+import househelper.shared.generated.resources.switch
+import househelper.shared.generated.resources.thermostat
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.DrawableResource
 import kotlin.jvm.JvmInline

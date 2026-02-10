@@ -8,7 +8,7 @@ plugins {
 
 kotlin {
     dependencies {
-        implementation(projects.composeApp)
+        implementation(projects.shared)
         implementation(compose.desktop.currentOs)
 
         implementation(libs.koin.compose.viewmodel)
