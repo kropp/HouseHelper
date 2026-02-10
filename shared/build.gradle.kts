@@ -56,15 +56,13 @@ kotlin {
         }
     }
 
-    jvm("desktop")
+    jvm()
 
     js { browser() }
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs { browser() }
 
     sourceSets {
-        val desktopMain by getting
-
         commonTest.dependencies {
             implementation(kotlin("test"))
             implementation(libs.compose.ui.test)
@@ -94,7 +92,7 @@ kotlin {
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)
         }
-        desktopMain.dependencies {
+        jvmMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutines.swing)
             implementation(libs.ktor.client.okhttp)
