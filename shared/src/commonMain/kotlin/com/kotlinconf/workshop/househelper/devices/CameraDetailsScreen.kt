@@ -39,7 +39,6 @@ import com.kotlinconf.workshop.househelper.CameraDevice
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.RoomId
 import com.kotlinconf.workshop.househelper.data.DemoHouseService
-import org.koin.core.parameter.parametersOf
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -47,7 +46,7 @@ fun CameraDetailsScreen(
     deviceId: DeviceId,
     onNavigateUp: () -> Unit,
     onNavigateToRename: (DeviceId) -> Unit,
-    // TODO Task 8: use Koin APIs
+    // TODO Task 8: use Metro APIs
     viewModel: CameraDetailsViewModel = viewModel { CameraDetailsViewModel(DemoHouseService(), deviceId) },
 ) {
     // TODO Task 5: replace this hardcoded value with data from the ViewModel

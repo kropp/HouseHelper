@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -31,7 +32,7 @@ kotlin {
             implementation(projects.shared)
 
             implementation(libs.compose.ui)
-            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.metrox.viewmodel.compose)
         }
     }
 }

@@ -74,7 +74,7 @@ fun RoomsContent(
         modifier = Modifier.fillMaxSize(),
     ) {
         items(rooms) { room ->
-            // TODO Task 8: use Koin APIs
+            // TODO Task 8: use Metro APIs
             val roomViewModel: RoomViewModel = viewModel(key = room.id.value) {
                 RoomViewModel(DemoHouseService(), room.id)
             }

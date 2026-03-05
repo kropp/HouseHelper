@@ -21,13 +21,13 @@ import househelper.shared.generated.resources.Res
 import househelper.shared.generated.resources.dashboard_tab_rooms
 import househelper.shared.generated.resources.dashboard_tab_settings
 import org.jetbrains.compose.resources.stringResource
-import org.koin.compose.viewmodel.koinViewModel
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun DashboardScreen(
     onNavigateToLightDetails: (DeviceId) -> Unit,
     onNavigateToCameraDetails: (DeviceId) -> Unit,
-    viewModel: DashboardViewModel = koinViewModel(),
+    viewModel: DashboardViewModel = metroViewModel(),
 ) {
     var selectedTabIndex by rememberSaveable { mutableStateOf(0) }
 

@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.androidKmpLibrary)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.metro)
 }
 
 val javaFxClassifier = run {
@@ -87,7 +88,7 @@ kotlin {
             implementation(libs.androidx.lifecycle.viewmodel.navigation3)
             implementation(libs.kotlinx.serialization)
 
-            implementation(libs.koin.compose.viewmodel)
+            implementation(libs.metrox.viewmodel.compose)
 
             implementation(libs.coil.compose)
             implementation(libs.coil.network.ktor3)

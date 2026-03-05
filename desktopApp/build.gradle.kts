@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.kotlinJvm)
     alias(libs.plugins.composeMultiplatform)
     alias(libs.plugins.composeCompiler)
+    alias(libs.plugins.metro)
 }
 
 kotlin {
@@ -11,7 +12,7 @@ kotlin {
         implementation(projects.shared)
         implementation(compose.desktop.currentOs)
 
-        implementation(libs.koin.compose.viewmodel)
+        implementation(libs.metrox.viewmodel.compose)
     }
 }
 
