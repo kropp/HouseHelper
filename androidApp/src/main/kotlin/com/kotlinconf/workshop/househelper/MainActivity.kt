@@ -12,8 +12,9 @@ class MainActivity : ComponentActivity() {
         processIntent(intent)
         enableEdgeToEdge()
 
+        val appGraph = (application as MyApplication).appGraph
         setContent {
-            App()
+            App(appGraph)
         }
     }
 

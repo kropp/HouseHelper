@@ -49,15 +49,17 @@ import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.LightDevice
 import kotlinx.coroutines.delay
-import org.koin.compose.viewmodel.koinViewModel
-import org.koin.core.parameter.parametersOf
+import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun LightDetailsScreen(
     deviceId: DeviceId,
     onNavigateUp: () -> Unit,
-    viewModel: LightDetailsViewModel = koinViewModel { parametersOf(deviceId) }
+    viewModel: LightDetailsViewModel =
+        assistedMetroViewModel<LightDetailsViewModel, LightDetailsViewModel.Factory> {
+            create(deviceId)
+        }
 ) {
     val device = viewModel.light.collectAsStateWithLifecycle().value
 

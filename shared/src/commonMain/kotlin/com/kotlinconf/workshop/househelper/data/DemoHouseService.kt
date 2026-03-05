@@ -13,6 +13,9 @@ import com.kotlinconf.workshop.househelper.SwitchDevice
 import com.kotlinconf.workshop.househelper.ThermostatDevice
 import com.kotlinconf.workshop.househelper.Toggleable
 import com.kotlinconf.workshop.househelper.utils.imageUrls
+import dev.zacsweers.metro.AppScope
+import dev.zacsweers.metro.ContributesBinding
+import dev.zacsweers.metro.SingleIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
@@ -25,6 +28,8 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlin.random.Random
 
+@SingleIn(AppScope::class)
+@ContributesBinding(AppScope::class)
 class DemoHouseService : HouseService {
     private val scope = CoroutineScope(Dispatchers.Default)
 

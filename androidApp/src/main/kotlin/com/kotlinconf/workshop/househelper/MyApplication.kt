@@ -1,11 +1,11 @@
 package com.kotlinconf.workshop.househelper
 
 import android.app.Application
-import org.koin.core.context.startKoin
+import com.kotlinconf.workshop.househelper.di.AppGraph
+import dev.zacsweers.metro.createGraph
 
 class MyApplication : Application() {
-    override fun onCreate() {
-        super.onCreate()
-        startKoin(createKoinConfig())
+    val appGraph: AppGraph by lazy {
+        createGraph<AppGraph>()
     }
 }
