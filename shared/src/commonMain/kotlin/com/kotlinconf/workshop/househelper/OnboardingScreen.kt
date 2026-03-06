@@ -85,7 +85,7 @@ fun OnboardingScreen(
                         color = MaterialTheme.colorScheme.onSurface,
                     )
 
-                     // TODO Task 4: add subtitle
+                    // TODO Task 4: add subtitle
                 }
             }
         }

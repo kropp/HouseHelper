@@ -1,4 +1,4 @@
-import Shared
+import ComposeApp
 import SwiftUI
 
 @main

@@ -49,8 +49,8 @@ data class LightDevice(
     val color: Color = DeviceConstants.Light.DEFAULT_COLOR
 ) : Device, Toggleable {
     init {
-        require(brightness in DeviceConstants.Light.MIN_BRIGHTNESS..DeviceConstants.Light.MAX_BRIGHTNESS) { 
-            "Brightness must be between ${DeviceConstants.Light.MIN_BRIGHTNESS} and ${DeviceConstants.Light.MAX_BRIGHTNESS}" 
+        require(brightness in DeviceConstants.Light.MIN_BRIGHTNESS..DeviceConstants.Light.MAX_BRIGHTNESS) {
+            "Brightness must be between ${DeviceConstants.Light.MIN_BRIGHTNESS} and ${DeviceConstants.Light.MAX_BRIGHTNESS}"
         }
     }
 }

@@ -12,14 +12,4 @@ import dev.zacsweers.metrox.viewmodel.ViewModelGraph
 import kotlin.reflect.KClass
 
 @DependencyGraph(AppScope::class)
-interface AppGraph : ViewModelGraph {
-    @Provides
-    @SingleIn(AppScope::class)
-    fun provideMetroViewModelFactory(
-        viewModelProviders: Map<KClass<out ViewModel>, Provider<ViewModel>>,
-        manualAssistedFactoryProviders: Map<KClass<out ManualViewModelAssistedFactory>, Provider<ManualViewModelAssistedFactory>>,
-    ): MetroViewModelFactory = object : MetroViewModelFactory() {
-        override val viewModelProviders get() = viewModelProviders
-        override val manualAssistedFactoryProviders get() = manualAssistedFactoryProviders
-    }
-}
+interface AppGraph : ViewModelGraph

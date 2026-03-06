@@ -91,8 +91,16 @@ val demoDevices = listOf(
         isOn = true,
         brightness = 75
     ),
-    HumidityDevice(deviceId = DeviceId("kitchen_humidity"), name = "Humidity", roomId = RoomId("kitchen")),
-    SwitchDevice(deviceId = DeviceId("kitchen_oven_switch"), name = "Oven Switch", roomId = RoomId("kitchen")),
+    HumidityDevice(
+        deviceId = DeviceId("kitchen_humidity"),
+        name = "Humidity",
+        roomId = RoomId("kitchen")
+    ),
+    SwitchDevice(
+        deviceId = DeviceId("kitchen_oven_switch"),
+        name = "Oven Switch",
+        roomId = RoomId("kitchen")
+    ),
     SwitchDevice(
         deviceId = DeviceId("kitchen_dishwasher"),
         name = "Dishwasher",
@@ -131,7 +139,11 @@ val demoDevices = listOf(
         roomId = RoomId("bathroom"),
         brightness = 0
     ),
-    HumidityDevice(deviceId = DeviceId("bathroom_humidity"), name = "Humidity", roomId = RoomId("bathroom")),
+    HumidityDevice(
+        deviceId = DeviceId("bathroom_humidity"),
+        name = "Humidity",
+        roomId = RoomId("bathroom")
+    ),
     ThermostatDevice(
         deviceId = DeviceId("bathroom_temperature"),
         name = "Temperature",
@@ -163,7 +175,11 @@ val demoDevices = listOf(
         roomId = RoomId("bedroom"),
         brightness = 0
     ),
-    SwitchDevice(deviceId = DeviceId("bedroom_tv_switch"), name = "TV Switch", roomId = RoomId("bedroom")),
+    SwitchDevice(
+        deviceId = DeviceId("bedroom_tv_switch"),
+        name = "TV Switch",
+        roomId = RoomId("bedroom")
+    ),
     SwitchDevice(
         deviceId = DeviceId("bedroom_air_purifier"),
         name = "Air Purifier",
@@ -175,7 +191,11 @@ val demoDevices = listOf(
         name = "Temperature",
         roomId = RoomId("bedroom")
     ),
-    HumidityDevice(deviceId = DeviceId("bedroom_humidity"), name = "Humidity", roomId = RoomId("bedroom")),
+    HumidityDevice(
+        deviceId = DeviceId("bedroom_humidity"),
+        name = "Humidity",
+        roomId = RoomId("bedroom")
+    ),
     CameraDevice(
         deviceId = DeviceId("bedroom_security_camera"),
         name = "Security Camera",

@@ -45,7 +45,8 @@ class DemoHouseService : HouseService {
                     deviceList.map { device ->
                         when (device) {
                             is HumidityDevice -> {
-                                val change = Random.nextFloat() * 4f - 2f // Random value between -2 and 2
+                                val change =
+                                    Random.nextFloat() * 4f - 2f // Random value between -2 and 2
                                 device.copy(
                                     currentValue = (device.currentValue + change).coerceIn(
                                         DeviceConstants.Humidity.MIN_HUMIDITY,
@@ -55,7 +56,8 @@ class DemoHouseService : HouseService {
                             }
 
                             is ThermostatDevice -> {
-                                val change = Random.nextFloat() * 4f - 2f // Random value between -2 and 2
+                                val change =
+                                    Random.nextFloat() * 4f - 2f // Random value between -2 and 2
                                 device.copy(
                                     currentValue = (device.currentValue + change).coerceIn(
                                         DeviceConstants.Thermostat.MIN_TEMPERATURE,

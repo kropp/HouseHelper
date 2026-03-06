@@ -17,11 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceId
+import dev.zacsweers.metrox.viewmodel.metroViewModel
 import househelper.shared.generated.resources.Res
 import househelper.shared.generated.resources.dashboard_tab_rooms
 import househelper.shared.generated.resources.dashboard_tab_settings
 import org.jetbrains.compose.resources.stringResource
-import dev.zacsweers.metrox.viewmodel.metroViewModel
 
 @Composable
 fun DashboardScreen(

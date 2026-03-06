@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 
 @ContributesIntoMap(AppScope::class)
-@ViewModelKey(DashboardViewModel::class)
+@ViewModelKey
 class DashboardViewModel(
     houseService: HouseService,
 ) : ViewModel() {

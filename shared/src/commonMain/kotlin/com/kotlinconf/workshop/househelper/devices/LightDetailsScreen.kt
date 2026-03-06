@@ -48,8 +48,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kotlinconf.workshop.househelper.DeviceConstants
 import com.kotlinconf.workshop.househelper.DeviceId
 import com.kotlinconf.workshop.househelper.LightDevice
-import kotlinx.coroutines.delay
 import dev.zacsweers.metrox.viewmodel.assistedMetroViewModel
+import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable

@@ -47,7 +47,9 @@ fun CameraDetailsScreen(
     onNavigateUp: () -> Unit,
     onNavigateToRename: (DeviceId) -> Unit,
     // TODO Task 8: use Metro APIs
-    viewModel: CameraDetailsViewModel = viewModel { CameraDetailsViewModel(DemoHouseService(), deviceId) },
+    viewModel: CameraDetailsViewModel = viewModel {
+        CameraDetailsViewModel(DemoHouseService(), deviceId)
+    },
 ) {
     // TODO Task 5: replace this hardcoded value with data from the ViewModel
     val device = CameraDevice(deviceId, "Fake Camera", roomId = RoomId(""))

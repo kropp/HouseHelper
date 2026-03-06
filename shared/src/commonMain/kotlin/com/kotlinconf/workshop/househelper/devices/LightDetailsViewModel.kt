@@ -52,7 +52,7 @@ class LightDetailsViewModel(
     }
 
     @AssistedFactory
-    @ManualViewModelAssistedFactoryKey(Factory::class)
+    @ManualViewModelAssistedFactoryKey
     @ContributesIntoMap(AppScope::class)
     fun interface Factory : ManualViewModelAssistedFactory {
         fun create(deviceId: DeviceId): LightDetailsViewModel
